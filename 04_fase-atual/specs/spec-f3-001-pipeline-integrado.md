@@ -2,7 +2,7 @@
 
 **Fase:** 3
 **Status:** planejada
-**Emendas vigentes:** E-F3-001-01 (2026-10-06) — hierarquia Demanda → Propostas → Vagas; E-F3-001-02 (2026-10-07) — prazos sem SLA autônomo
+**Emendas vigentes:** E-F3-001-01 (2026-10-06) — hierarquia Demanda → Propostas → Vagas; E-F3-001-02 (2026-10-07) — prazos sem SLA autônomo; E-F3-001-03 (2026-10-22) — visibilidade e local de execução; E-F3-001-04 (2026-10-26) — decisões D1–D6 do Champion
 **Dono:** comercial/gerentes de negócio operam; direção aprova taxonomia; consultor valida a primeira demonstração
 **Origem no escopo:** Fase 3; C-03; DC-001; DC-004; RQ-003/RQ-004; G-002
 **Degrau da solução:** reuso — evoluir o pipeline mínimo da F1 (`demandas`) para a jornada operacional completa com proposta/vaga e retorno; sem novo sistema, sem integração externa.
@@ -36,17 +36,17 @@
 
 | Origem/destino | Fonte de verdade | Campos/contrato | Autenticação/permissão | Timeout/retry/idempotência | Tratamento de erro |
 |---|---|---|---|---|---|
-| Pipeline F1 (`demandas`) → pipeline integrado | Registro existente + dicionário F1 | `record_id`, origem, tipo (inbound/outbound), canal, campanha, serviço, estado, dono, próxima ação, prazo, proposta/vaga {nº, serviço, área, prazo operacional (vaga), capacidade}, resultado, motivo, evidência | Escrita por papel server-side | Transição idempotente por `record_id` + versão de estado; reprocessar não duplica | Transição sem evidência mínima é rejeitada e registrada (RN-F1-007) |
+| Pipeline F1 (`demandas`) → pipeline integrado | Registro existente + dicionário F1 | `record_id`, origem, tipo (inbound/outbound), canal, campanha, serviço, estado, dono, próxima ação, prazo, proposta/vaga {nº, serviço, área, prazo operacional (vaga), capacidade}, resultado, motivo, evidência | Escrita por papel server-side | Transição idempotente por `record_id` + versão de estado; reprocessar não duplica | Transição sem evidência é rejeitada e registrada (RN-F1-007) |
 | Campanha/experimento F2 → origem da demanda | Atribuição F2-002 (fonte única declarada) | `sistema_origem_tecnico`, `record_id` da fonte, campanha/experimento_id | Leitura | Ligação por identidade explícita da fonte; sem dedupe por inferência (B3-ID-01) | Fonte ausente → origem `desconhecida` visível, nunca inventada |
-| Operação (R&S/Alocação/SOS) → retorno | Registro de proposta/vaga | estado do retorno, prazo, capacidade, resultado, motivo | Escrita do papel operação | Retorno idempotente por proposta/vaga; novo evento = novo registro | Sem retorno no prazo → pendência com dono e escalonamento (RN-F3-004) |
+| Operação (R&S/Alocação/SOS) → retorno | Registro de proposta/vaga | estado do retorno, prazo, capacidade, resultado, motivo — **estado corrente persiste na própria vaga (campo da coleção) e cada alteração também no log append-only (E-F3-001-04, D4)** | Escrita do papel operação | Retorno idempotente por proposta/vaga; novo evento = novo registro | Sem retorno no prazo → pendência com dono e escalonamento (RN-F3-004) |
 | Propostas/vagas relacionadas → demanda (E-F3-001-01) | Coleções novas `propostas`/`vagas` | `demanda_id` (= `record_id` da demanda), `proposta_id` (na vaga), nº, serviço, área, prazo operacional (vaga; proposta sem prazo próprio — E-F3-001-02), resultado, motivo, evidência | Escrita por papel server-side | Criação idempotente por (`demanda_id`, nº); reprocessar não duplica | Filho sem demanda válida → rejeitado; empresa em filho → rejeitado |
 
 | Regra de negócio | Condição | Ação/resultado | Exceção | Fonte |
 |---|---|---|---|---|
 | RN-F3-001 — Jornada única | Registro ativo | Estado único + log append-only de transições (estende RN-F1-006) | Sem evidência: mantém estado anterior + pendência | C-03 |
-| RN-F3-002 — Proposta/vaga rastreável | Estado `proposta` ou `vaga aberta` | Exigir nº/serviço/área + prazo operacional (vaga) + dono do retorno; proposta não tem prazo próprio; origem permanece visível | Vaga sem número/serviço → pendência, não avança | §Fase 3, C-03 |
+| RN-F3-002 — Proposta/vaga rastreável | Estado `proposta` ou `vaga aberta` | Exigir nº/serviço/área + prazo operacional (vaga) + dono do retorno; proposta não tem prazo próprio; origem permanece visível. **Área "Não informado" não bloqueia o avanço nem gera pendência automática nova; confirmação humana, sem inferência (E-F3-001-04, D3)** | Vaga sem número/serviço → pendência, não avança | §Fase 3, C-03 |
 | RN-F3-003 — Vaga não é fechamento | `vaga aberta` | Contar como demanda aberta; resultado posterior separado | `ganho` exige evidência de decisão (RN-F1-010) | RQ-008 |
-| RN-F3-004 — Oportunidade parada | Sem próxima ação vencida ou sem resposta no prazo aplicável (vaga: prazo operacional; ação comercial: prazo da próxima ação — E-F3-001-02) | Escalonar com prazo e dono; caminho para terminal com motivo | Sem matriz RACI (B3-RACI-01): registrar pendência com dono provisório | §Fase 3 regras |
+| RN-F3-004 — Oportunidade parada | Sem próxima ação vencida ou sem resposta no prazo aplicável (vaga: prazo operacional; ação comercial: prazo da próxima ação — E-F3-001-02) | Escalonar com prazo e dono; caminho para terminal com motivo. **Recuperação comercial (E-F3-001-04, D6):** no máximo **3 tentativas** de recuperação em até **90 dias corridos**; esgotadas as condições, o sistema **sugere** "sem timing", mas a mudança depende de **confirmação expressa do Comercial** — nenhuma alteração automática | Sem matriz RACI (B3-RACI-01): registrar pendência com dono provisório | §Fase 3 regras; decisão Champion 24/09 mantida, validada 26/10 |
 | RN-F3-005 — Sem inferência de origem | Origem/campanha ausente | Exibir `desconhecido`; nunca completar por suposição | — | C-01, §Fase 1 |
 | RN-F3-006 — Contagem pela fonte | Qualquer contagem/painel | Recalcular a partir da fonte via núcleo de reconciliação compartilhado; sem cópia divergente | Divergência fonte×painel → pendência com dono | EV-05, F1 |
 | RN-F3-007 — Hierarquia única (E-F3-001-01) | Registro de proposta/vaga | Persistir como registro relacionado (`demanda_id`); demanda é o registro principal; empresa permanece campo único da demanda | Empresa duplicada em proposta/vaga → rejeitado | Decisão Champion 25/09 |
@@ -125,6 +125,7 @@
 | 2026-10-06 | DÚVIDA do Champion registrada no changelog em 2026-09-25 | E-F3-001-01 | Formalizar a hierarquia Demanda → Propostas → Vagas decidida pela Talent Group e os limites de alteração da F3-T01 |
 | 2026-10-07 | DÚVIDA do Champion registrada no changelog em 2026-10-06 (SLA/prazo) | E-F3-001-02 | Eliminar o SLA autônomo: prazo operacional exclusivo da vaga; demanda usa o prazo da próxima ação; proposta sem prazo próprio |
 | 2026-10-22 | 5ª call (EV-5C-04, decisão P1) | E-F3-001-03 | Visibilidade: cada task declara o que o cliente vai ver e onde executar; regras e critérios inalterados |
+| 2026-10-26 | Devolutiva formal do Champion (06_notas/devolutiva-decisoes-d4-d5-d6-2026-10-26.md) | E-F3-001-04 | Incorporar as decisões de negócio D1–D6 do Champion (07–08/10 e 26/10) à SPEC: vocabulário de serviço, área, RN-F3-002 × "Não informado", persistência do estado do retorno, encerramento da substituição e regras de recuperação comercial (RN-F3-004) |
 
 ### E-F3-001-01 — Hierarquia Demanda → Propostas → Vagas (2026-10-06)
 
@@ -190,3 +191,31 @@ Champion o que ela vai criar.
   relatório simples de "passou / não passou" por caso.
 
 **Vigência:** tasks ainda não concluídas desta SPEC.
+
+### E-F3-001-04 — Decisões de negócio D1–D6 do Champion (2026-10-26)
+
+**Origem:** devolutiva formal do Champion/owner (Luiz Carlos Manni) ao consultor, de 26/10/2026 (`06_notas/devolutiva-decisoes-d4-d5-d6-2026-10-26.md`), incorporando as decisões D1–D3 (07–08/10/2026, ainda sem emenda formal) e D4–D6 (validadas pelo Champion em 26/10/2026). Ciência: Izabel (gestão do projeto) e João Paulo (Champion). Registro correspondente no changelog em 26/10/2026.
+
+**Natureza:** emenda única documental, em lote, solicitada pelo próprio Champion. Nenhuma alteração técnica nesta etapa (ordem do Champion de 26/10): a F3-T01 permanece bloqueada até a atualização e validação das especificações; a emenda é a última trava documental da F3-T01.
+
+**D1 — Vocabulário de serviço (decisão 07/10/2026):** `oferta_servico` mantém exclusivamente os valores **R&S / TMO / R&S + TMO**. A expressão "R&S/Alocação/SOS" é descrição da operação que devolve o retorno, não valor de campo. **SOS = Serviço Orientado a Substituições, dentro do TMO.**
+
+**D2 — Área (decisão 07–08/10/2026):** área = **departamento funcional do cargo da vaga**. Lista fechada v1 com **13 áreas**: TI; Comercial/Vendas; Logística/Supply Chain; Projetos/PMO; Engenharia/Manutenção; Financeiro/Contábil; Administrativo; Marketing; Recursos Humanos; Operações/Produção; Educacional/Acadêmico; Auditoria/Riscos; Laboratorial/Saúde. **"Não informado" é condição provisória, não área definitiva.**
+
+**D3 — RN-F3-002 × "Não informado" (decisão 08/10/2026):** área "Não informado" **não bloqueia o avanço** e **não gera pendência automática nova**; a confirmação é responsabilidade humana, **sem inferência** (dado desconhecido nunca é completado por inferência — princípio vigente).
+
+**D4 — Persistência do estado do retorno (decisão 26/10/2026):** a situação atual da vaga fica armazenada **na própria vaga** (campo da coleção) e cada alteração é registrada **também no histórico** — estado corrente na vaga + trilha de eventos no **log append-only** ("novo evento = novo registro"), **sem reescrever histórico**. Os dois mecanismos convivem. Resolve a dúvida "campo da coleção × atributo do log" e destrava a etapa E2 da F3-T01 (criação de `propostas`/`vagas` com o campo de estado) e, em cascata, as 8 tasks dependentes (T10/T11 Funil, T03/T04 Gargalos, T05/T06 Handoff, T07/T08 DHO, T02).
+
+**D5 — Encerramento do ciclo de substituição (decisão 26/10/2026):** criar a situação **"Substituição encerrada"** na lista fechada versionada do estado do retorno, com **motivo obrigatório** em lista fechada de 2 valores: **"reposto"** ou **"encerrada sem reposição"**. O encerramento da substituição **NÃO encerra automaticamente a vaga**. **Supersede** o ponto aberto registrado na DECISÃO de 08/10/2026 ("'Substituição encerrada' NÃO aprovado — permanece dúvida"). Destrava a etapa E5 da F3-T01 (retorno/escalonamento).
+
+**D6 — Regras de recuperação comercial (decisão 26/10/2026; regras de 24/09/2026 mantidas integralmente):** no máximo **3 tentativas** de recuperação em até **90 dias corridos**; esgotadas as condições, o sistema **sugere** "sem timing", mas a mudança depende de **confirmação expressa do Comercial**; **nenhuma alteração automática**. Preserva a taxonomia F1 (sem timing/perdido como estados terminais com motivo) e não cria fluxo paralelo de responsáveis. Destrava a etapa E6 da F3-T01 (recuperação de oportunidade parada). Incorporada ao corpo desta SPEC em **RN-F3-004**.
+
+**Efeito sobre o corpo desta SPEC (aplicado nesta emenda):**
+1. Contrato "Operação → retorno" (Dados e integrações): estado corrente persiste na própria vaga (campo da coleção) e cada alteração também no log append-only (D4).
+2. RN-F3-004: regras de recuperação comercial explícitas — 3 tentativas / 90 dias corridos / sugestão de "sem timing" condicionada à confirmação expressa do Comercial / nada automático (D6).
+3. RN-F3-002: área "Não informado" não bloqueia o avanço nem gera pendência automática nova; confirmação humana, sem inferência (D3).
+4. Campo de área da vaga: lista fechada v1 de 13 áreas (D2); campo `oferta_servico`: somente R&S / TMO / R&S + TMO (D1); estado do retorno: lista fechada versionada inclui "Substituição encerrada" com motivo obrigatório "reposto" ou "encerrada sem reposição", sem encerrar automaticamente a vaga (D5).
+
+**Supersede sem apagar histórico:** onde registros anteriores (inclusive a DECISÃO de 08/10/2026 sobre "Substituição encerrada") contrariem o acima, **prevalece esta emenda**; os registros anteriores permanecem no histórico como registro do processo, sem reescrita.
+
+**Vigência:** vale para a F3-T01 e demais tasks desta SPEC. Decisões de produto adicionais pertencem à Talent Group; emendas documentais são responsabilidade da consultoria conforme a Constituição do projeto.
