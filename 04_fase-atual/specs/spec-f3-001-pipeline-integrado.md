@@ -1,3 +1,4 @@
+successfully downloaded text file (SHA: c737d0e74d5d25116586b1e391ff2f789ea7c959)
 # SPEC-F3-001 — Pipeline integrado de demanda (estados, motivação e jornada única)
 
 **Fase:** 3
@@ -36,7 +37,7 @@
 
 | Origem/destino | Fonte de verdade | Campos/contrato | Autenticação/permissão | Timeout/retry/idempotência | Tratamento de erro |
 |---|---|---|---|---|---|
-| Pipeline F1 (`demandas`) → pipeline integrado | Registro existente + dicionário F1 | `record_id`, origem, tipo (inbound/outbound), canal, campanha, serviço, estado, dono, próxima ação, prazo, proposta/vaga {nº, serviço, área, prazo operacional (vaga), capacidade}, resultado, motivo, evidência | Escrita por papel server-side | Transição idempotente por `record_id` + versão de estado; reprocessar não duplica | Transição sem evidência é rejeitada e registrada (RN-F1-007) |
+| Pipeline F1 (`demandas`) → pipeline integrado | Registro existente + dicionário F1 | `record_id`, origem, tipo (inbound/outbound), canal, campanha, serviço, estado, dono, próxima ação, prazo, proposta/vaga {nº, serviço, área, prazo operacional (vaga), capacidade}, resultado, motivo, evidência | Escrita por papel server-side | Transição idempotente por `record_id` + versão de estado; reprocessar não duplica | Transição sem evidência mínima é rejeitada e registrada (RN-F1-007) |
 | Campanha/experimento F2 → origem da demanda | Atribuição F2-002 (fonte única declarada) | `sistema_origem_tecnico`, `record_id` da fonte, campanha/experimento_id | Leitura | Ligação por identidade explícita da fonte; sem dedupe por inferência (B3-ID-01) | Fonte ausente → origem `desconhecida` visível, nunca inventada |
 | Operação (R&S/Alocação/SOS) → retorno | Registro de proposta/vaga | estado do retorno, prazo, capacidade, resultado, motivo — **estado corrente persiste na própria vaga (campo da coleção) e cada alteração também no log append-only (E-F3-001-04, D4)** | Escrita do papel operação | Retorno idempotente por proposta/vaga; novo evento = novo registro | Sem retorno no prazo → pendência com dono e escalonamento (RN-F3-004) |
 | Propostas/vagas relacionadas → demanda (E-F3-001-01) | Coleções novas `propostas`/`vagas` | `demanda_id` (= `record_id` da demanda), `proposta_id` (na vaga), nº, serviço, área, prazo operacional (vaga; proposta sem prazo próprio — E-F3-001-02), resultado, motivo, evidência | Escrita por papel server-side | Criação idempotente por (`demanda_id`, nº); reprocessar não duplica | Filho sem demanda válida → rejeitado; empresa em filho → rejeitado |
