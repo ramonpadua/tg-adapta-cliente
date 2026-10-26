@@ -1,4 +1,3 @@
-successfully downloaded text file (SHA: c737d0e74d5d25116586b1e391ff2f789ea7c959)
 # SPEC-F3-001 — Pipeline integrado de demanda (estados, motivação e jornada única)
 
 **Fase:** 3

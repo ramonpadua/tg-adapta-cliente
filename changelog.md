@@ -1,4 +1,3 @@
-successfully downloaded text file (SHA: 2beb5907ddcdf8848c81a5822e15a462554f11b0)
 # Changelog — Projeto TG Mais Serviços de Tecnologia e RH LTDA
 
 > Registro de tudo que aconteceu (inclusive dúvidas para o consultor).
