@@ -1,22 +1,21 @@
 # Estado atual — Adapta Cliente
 
-- fase: 3
+- task_id: F3-T12
 - champion: João Paulo
-- task_elegivel: F3-T01 (desbloqueada — emenda E-F3-001-04 conferida 15/15) e F3-T12 (pronta — B3-META-LEITOR resolvido)
-- tasks_fase_3: 1/13 concluídas (8 originais + F3-T09..T13 publicadas em 22/10/2026); F3-T01 em andamento; ordem recomendada: F3-T01 → T09 → T10 → T11 → T12 → T13 → T02 → T03..T08
-- prazo_referencia: ajustável pelo Champion (referência inicial 30/09/2026 vencida; decisão Navaar 07/10/2026 — sem trava de prazo)
-- ambiente: Skip (GoSkip + SkipCloud), conforme regra geral do consultor
-- etapa: pronta_para_execucao (F3-T01 DESBLOQUEADA — emenda E-F3-001-04 publicada por Ramon em 26/10 e conferida 15/15 em 28/10; F3-T12 pronta — B3-META-LEITOR resolvido por aceite escrito, aguarda autorização expressa)
-- autorizacao_implementacao: confirmada 2026-10-23 16:04 — "Maestro, autorizo a execução documental da F3-T09, conforme o plano apresentado, exclusivamente para diagnóstico e registro das evidências." (Champion/owner; ordens: Hub 57113 permanece ATIVO até substituto aprovado; relatório deve registrar que leads no 67634 ≠ integração com o funil; sem alterar automações/integrações/bancos/campanhas/configurações; parar para homologação após publicar)
-- teste_humano: F3-T09 homologado 2026-10-24 09:01 — "homologo a entrega documental da F3-T09" com 6 condições: diagnóstico aceito; CA-3-15 parcial (Hub não parado); Hub 57113 ativo até substituta aprovada; leads 67634 sem integração/visualização comercial = pendência operacional; sem autorização para alterar automações/bancos/campanhas/integrações; renovação do token Meta sem expor credenciais no chat
-- verificacao_automatica: passou — baseline somente leitura coletado em 23/10 (cron list ETHOS: 4 jobs; logs do Hub 57113: maestro_daily ok 11:00 + watchdog 15min; código panorama_email.js do 67634 lido; erro 401 do MCP metaads registrado como limitação)
-- aprendizado: capturado:06_notas/aprendizado-continuo/controle.md (AP-2026-10-22-1600; AP-2026-10-24-0905 — critério parcial sustentado por condição escrita do Champion)
-- bloqueios: B3-META-01 (só métricas de campanha pela SPEC-F3-006), B3-META-LEITOR RESOLVIDO 28/10 (aceite escrito, alternativa b da SPEC; 06_notas/aceite-b3-meta-leitor-2026-10-28.md), TRAVA DOCUMENTAL D1–D6 RESOLVIDA (emenda E-F3-001-04 de 26/10, conferida 15/15), B3-LGPD-01 (formalizado), B3-ID-01, B3-MET-01, B3-RACI-01, B3-DHO-01
-- protocolo_interacao: vigente desde 22/10/2026 — explicar fase/task atual/próxima, combinar cada passo, pedir para conferir no Skip, fechar com resumo (CLAUDE.md)
-- projeto_skip: "repositório adapta" (GitHub talentgroupepress-web); nenhum dado em outro projeto Skip
-- ultima_acao: 2026-10-28 — emenda E-F3-001-04 (D1–D6) publicada por Ramon Pádua localizada e CONFERIDA 15/15 (SPEC atualizada, contratos e RNs incorporados); aceite escrito do B3-META-LEITOR registrado (alternativa b da SPEC) com as 4 decisões do Champion sobre o acesso à Meta; F3-T01 DESBLOQUEADA. 2026-10-26 (15:53) — verificação do Champion na interface da Meta para a F3-T12: Luiz Carlos Manni com acesso TOTAL à TalentGroup_01 (divergente do registro F2-T09 de 22/09), usuário de sistema Adapta_TG1 com acesso administrativo (proveniência a confirmar pelo consultor), CAPI System User com apps/pixels, Hub 57113 lendo normalmente; DÚVIDA formal ao Ramon sobre identidade/mecanismo da automação (4 perguntas — changelog 26/10); nenhuma alteração executada na Meta, no Skip ou no Hub. Tarde de 26/10 — devolutiva D1–D6 ENCAMINHADA ao Ramon pelo Champion (aguardando emenda datada); orientação passo a passo da configuração B3-META-LEITOR (Opção A) iniciada — primeiro passo: verificação de reuso do leitor existente da F2-T09 na interface da Meta (somente leitura); nenhuma alteração técnica. Manhã de 26/10 — Champion conversou com Ramon e validou D4/D5/D6 como decisões de negócio (D4 estado na própria vaga + histórico com rastreabilidade; D5 "Substituição encerrada" com motivo "reposto"/"encerrada sem reposição", sem encerrar a vaga automaticamente; D6 regras de 24/09 mantidas — 3 tentativas/90 dias, sugestão de "sem timing" com confirmação do Comercial); devolutiva formal ao consultor solicitando emenda única D1–D6 (06_notas/devolutiva-decisoes-d4-d5-d6-2026-10-26.md); verificação: 6/6 decisões validadas, 0/6 emendadas — emenda única é a última trava documental da F3-T01; F3-T01 BLOQUEADA por ordem do Champion; nenhuma alteração técnica. Histórico 24/10: plano F3-T12 v2 publicado (2 arquivos), cobrança D4/D5/D6 registrada, rascunho de e-mail pronto (envio substituído pela conversa direta do Champion). Histórico F3-T09 (concluída 24/10 com ressalvas): 06_notas/diagnostico-maestro-f3-t09.md. Histórico E2 da F3-T01 (concluída 23/10): migration 0021_origem_dado + núcleo src/lib/origem-dado.ts + painel oficial Index.tsx (v0.0.98, ref 2aab7da).
-- proxima_acao: (a) F3-T01 destravada — aguardando autorização de execução do Champion (etapas E2-coleções, E5, E6); (b) F3-T12 pronta para executar — aguardando autorização expressa (conferir o principal conectado no conector antes da 1a execução; renovação do token Meta pelo consentimento, sem credenciais no chat); (c) F3-T10/T11 (Funil) liberadas em cascata. Hub 57113 ativo e intocado. Nota: o consultor pode querer revisar a emenda; a conferência 15/15 é do Maestro e a validação final é do Champion.
-- atualizado_em: 2026-10-28T09:55:00-03:00
+- spec: 04_fase-atual/specs/spec-f3-006-campanhas-meta-maestro.md
+- fase: 3
+- task_elegivel: F3-T12 (selecionada)
+- tasks_fase_3: 1/13 concluídas (F3-T09); F3-T12 analisada — aguardando autorização; F3-T01 destravada pela emenda E-F3-001-04 (não é a task ativa)
+- prazo_referencia: ajustável pelo Champion (referência inicial 30/09/2026 vencida; sem trava de prazo)
+- ambiente: Skip (GoSkip + SkipCloud) — projeto 51414 "Repositório Adapta"
+- etapa: aguardando_autorizacao
+- autorizacao_implementacao: ausente (o Champion escolheu a frente "tela de campanhas" em 28/10 09:58; a SKILL exige autorização explícita do plano em mensagem separada)
+- teste_humano: pendente
+- verificacao_automatica: baseline inspecionado em 28/10 — projeto 51414 tem 8 coleções (campanhas_meta/conexao_meta NÃO existem), rotas sem /campanhas, migration mais recente 0021 (próxima = 0022), SMTP no relay da plataforma (noreply@mail.goskip.dev), segredo COMPOSIO_API_KEY presente, conector OAuth do Skip disponível no app (src/lib/skipConnectors.ts); MCP metaads com token EXPIRADO desde 19/10 (401 confirmado hoje — leitura de campanhas não executável por essa via)
+- aprendizado: pendente
+- ultima_acao: 2026-10-28 10:05 — análise profunda da F3-T12 concluída (SPEC F3-006 inteira, plano v2 §1–14, código do 51414, coleções ao vivo, migrations, SMTP, segredos); nada implementado
+- proxima_acao: aguardar autorização do Champion para implementar a F3-T12
+- atualizado_em: 2026-10-28T10:05:00-03:00
 
 ## Defaults conservadores da F3-T01 (protocolo anti-trava — Constituição §Dúvidas e insumos, 07/10/2026)
 
