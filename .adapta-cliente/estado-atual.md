@@ -31,3 +31,10 @@ Adotados pelo Champion em 09/10/2026 enquanto as emendas não chegam; nenhuma D�
 ## DÚVIDAs documentais pendentes (lote único ao consultor)
 
 NENHUMA — D1–D6 resolvidas pela emenda E-F3-001-04 (26/10/2026), conferida 15/15 em 28/10/2026. Registros históricos das dúvidas permanecem no changelog (07–08/10 e 24–26/10) como registro do processo.
+
+
+## Consolidação documental publicada em 29/10/2026
+
+SPEC F3-001, fase.md, Tasks Gerais, matriz e fixtures foram alinhados com E-F3-001-04. D4/D5/D6 não são bloqueios documentais vigentes; não perguntar novamente onde persiste o retorno, quais motivos encerram substituição ou se a recuperação usa 3 tentativas/90 dias/confirmação humana.
+
+Esta atualização não muda a task ativa F3-T12, não conclui F3-T01 nem comprova E2-coleções/E5/E6. Histórico técnico de 28/10 e aceites anteriores preservados integralmente. O Champion encerra T12 ou registra pausa segura antes de retomar T01; uma task por vez. E4 continua plano sem emenda/task liberada; dados pessoais reais continuam condicionados à política LGPD aprovada.

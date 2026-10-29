@@ -22,8 +22,8 @@
 
 ## Limites e dependências
 
-- **Inclui:** transições operacionais do pipeline; campos de proposta/vaga (número, serviço, área, prazo operacional [exclusivo da vaga — E-F3-001-02], capacidade, resultado, motivo); **coleções relacionadas `propostas` e `vagas` conforme E-F3-001-01**; retorno da operação; escalonamento de oportunidade parada; log de transição append-only; filtros por tipo de origem (inbound/outbound).
-- **Fora de escopo:** integração com CRM/ERP/ATS externo; scraping de vagas; automação de contato; substituição do ERP; Customer Success completo; decisão comercial sem pessoa responsável; KPI de resultado contra alvo (bloqueado por B3-MET-01); **qualquer estrutura além das coleções relacionadas `propostas`/`vagas` (ex.: empresa como registro separado, pipeline de vagas, estado em proposta/vaga) — ver E-F3-001-01**.
+- **Inclui:** transições operacionais do pipeline; campos de proposta/vaga (número, serviço, área, prazo operacional [exclusivo da vaga — E-F3-001-02], capacidade, estado do retorno na vaga e trilha no log, resultado, motivo); **coleções relacionadas `propostas` e `vagas` conforme E-F3-001-01**; retorno da operação; escalonamento de oportunidade parada; log de transição append-only; filtros por tipo de origem (inbound/outbound).
+- **Fora de escopo:** integração com CRM/ERP/ATS externo; scraping de vagas; automação de contato; substituição do ERP; Customer Success completo; decisão comercial sem pessoa responsável; KPI de resultado contra alvo (bloqueado por B3-MET-01); **qualquer estrutura além das coleções relacionadas `propostas`/`vagas` (ex.: empresa como registro separado, pipeline de vagas, estado de pipeline em proposta/vaga (não confundir com o estado do retorno operacional da vaga autorizado pela E-F3-001-04)) — ver E-F3-001-01**.
 - **Entradas e pré-condições:** F1/F2 aceitas (estados, dicionário, atribuição); registros de amostra autorizados ou fixtures sintéticos; matriz de papéis/handoffs (B3-RACI-01) para a prova de retorno — a task de configuração pode avançar com papéis provisórios registrados, mas a prova de handoff exige a matriz nominal.
 - **Saídas/artefatos:** superfície de pipeline integrado (extensão do painel existente); campos/estados de proposta/vaga; coleções relacionadas `propostas`/`vagas`; log de transições; evidência `pipeline-f3.md` na pasta de entregas da fase.
 - **Dependências e responsáveis:** comercial classifica e age; R&S/Alocação/SOS devolve estado/prazo/resultado; direção aprova prazos/escalonamento; consultor revisa.
@@ -39,7 +39,7 @@
 | Pipeline F1 (`demandas`) → pipeline integrado | Registro existente + dicionário F1 | `record_id`, origem, tipo (inbound/outbound), canal, campanha, serviço, estado, dono, próxima ação, prazo, proposta/vaga {nº, serviço, área, prazo operacional (vaga), capacidade}, resultado, motivo, evidência | Escrita por papel server-side | Transição idempotente por `record_id` + versão de estado; reprocessar não duplica | Transição sem evidência mínima é rejeitada e registrada (RN-F1-007) |
 | Campanha/experimento F2 → origem da demanda | Atribuição F2-002 (fonte única declarada) | `sistema_origem_tecnico`, `record_id` da fonte, campanha/experimento_id | Leitura | Ligação por identidade explícita da fonte; sem dedupe por inferência (B3-ID-01) | Fonte ausente → origem `desconhecida` visível, nunca inventada |
 | Operação (R&S/Alocação/SOS) → retorno | Registro de proposta/vaga | estado do retorno, prazo, capacidade, resultado, motivo — **estado corrente persiste na própria vaga (campo da coleção) e cada alteração também no log append-only (E-F3-001-04, D4)** | Escrita do papel operação | Retorno idempotente por proposta/vaga; novo evento = novo registro | Sem retorno no prazo → pendência com dono e escalonamento (RN-F3-004) |
-| Propostas/vagas relacionadas → demanda (E-F3-001-01) | Coleções novas `propostas`/`vagas` | `demanda_id` (= `record_id` da demanda), `proposta_id` (na vaga), nº, serviço, área, prazo operacional (vaga; proposta sem prazo próprio — E-F3-001-02), resultado, motivo, evidência | Escrita por papel server-side | Criação idempotente por (`demanda_id`, nº); reprocessar não duplica | Filho sem demanda válida → rejeitado; empresa em filho → rejeitado |
+| Propostas/vagas relacionadas → demanda (E-F3-001-01) | Coleções novas `propostas`/`vagas` | `demanda_id` (= `record_id` da demanda), `proposta_id` (na vaga), nº, serviço, área, prazo operacional (vaga; proposta sem prazo próprio — E-F3-001-02), **estado do retorno operacional na própria vaga** (lista fechada versionada; mudanças também no log append-only), resultado, motivo, evidência — **inclui "Substituição encerrada", com motivo obrigatório "reposto" ou "encerrada sem reposição", sem encerrar a vaga automaticamente (E-F3-001-04, D4/D5)** | Escrita por papel server-side | Criação idempotente por (`demanda_id`, nº); reprocessar não duplica | Filho sem demanda válida → rejeitado; empresa em filho → rejeitado |
 
 | Regra de negócio | Condição | Ação/resultado | Exceção | Fonte |
 |---|---|---|---|---|
@@ -219,3 +219,21 @@ Champion o que ela vai criar.
 **Supersede sem apagar histórico:** onde registros anteriores (inclusive a DECISÃO de 08/10/2026 sobre "Substituição encerrada") contrariem o acima, **prevalece esta emenda**; os registros anteriores permanecem no histórico como registro do processo, sem reescrita.
 
 **Vigência:** vale para a F3-T01 e demais tasks desta SPEC. Decisões de produto adicionais pertencem à Talent Group; emendas documentais são responsabilidade da consultoria conforme a Constituição do projeto.
+
+### Consolidação operacional da E-F3-001-04 — 29/10/2026
+
+Esta consolidação aplica decisões existentes, sem nova regra de negócio. Estado de pipeline da demanda e estado do retorno operacional da vaga são conceitos distintos. A proibição de pipeline próprio nos filhos NÃO proíbe o estado do retorno na vaga.
+
+**Contrato verificável:** o estado do retorno corrente pertence à vaga; cada mudança gera evento novo no log append-only, vinculado à vaga, preservando autoria, data e evidência. Usar o nome físico de campo compatível com o schema confirmado, documentando o mapeamento antes da implementação; não criar dois campos concorrentes. A lista de retorno incorpora "Substituição encerrada". Nessa situação, o motivo é obrigatório: "reposto" ou "encerrada sem reposição". Resultado, estado da demanda e encerramento da vaga não são alterados automaticamente.
+
+**RN-F3-004 — três condições obrigatórias e concomitantes:** (1) limitar a recuperação a no máximo 3 tentativas; (2) respeitar a janela de até 90 dias corridos; (3) apenas sugerir "sem timing" quando se esgotarem as condições, exigindo confirmação expressa do Comercial para a transição. Atingir o limite de tentativas OU esgotar a janela impede continuar a recuperação fora dos limites. Nem o limite de tentativas nem o prazo autorizam mudança automática de estado. Não reiniciar contadores/prazos para contornar o limite. A referência temporal usada na implementação deve estar documentada nas decisões existentes; se não estiver, perguntar esse único detalhe ao Champion, sem reabrir as decisões 3/90/confirmação humana.
+
+**Provas adicionais no recorte da F3-T01 (não são nova task):**
+- [ ] Ler a situação atual da vaga e reconstruir suas mudanças pelo log, sem sobrescrever eventos anteriores.
+- [ ] Recusar "Substituição encerrada" sem motivo ou com motivo fora dos dois valores aprovados.
+- [ ] Aceitar cada motivo aprovado sem fechar automaticamente a vaga nem mudar o estado da demanda.
+- [ ] Provar os limites de 3 tentativas e de 90 dias separadamente; impedir a 4ª tentativa e recuperação fora da janela.
+- [ ] Sem confirmação comercial, registrar apenas sugestão de "sem timing", mantendo o estado; com confirmação e evidência, usar a transição existente.
+- [ ] Preservar F1/F2, identidades por fonte, origem sintética e gates LGPD/meta/RACI aplicáveis.
+
+**Retomada:** reler esta SPEC, tasks, matriz e fixtures consolidados. E2-coleções/E5/E6 estão documentalmente destravadas, mas não comprovadas nem aceitas por esta consolidação. Verificar o que já existe no aplicativo antes de propor mudanças; não repetir migrations nem etapas já aceitas. Uma task ativa por vez; F3-T12 permanece a task ativa registrada até encerramento ou pausa segura explícita pelo Champion.
