@@ -98,3 +98,29 @@ Não atingido: mais 14 dias. Atingido: ganha a mão **apenas nas ações LIVRES*
 - **Reputação:** pausar campanha precisa de explicação pronta ao cliente — a trilha fornece.
 - **Política de plataforma:** Meta e LinkedIn vigiam mais automação de escrita que de leitura; conta pode ser restringida. O padrão de ação deve ser conservador.
 - **Expectativa de resultado:** R$ 2.700/mês é orçamento de **teste**, não de volume. Contra a meta de 60 vagas R&S/mês, o CPL de decisor (4–30x o de lead comum) não permite escala. Registrado para não haver leitura equivocada do resultado do mês.
+
+## 12. Natureza provisória da verba (registro do Champion, 28/10/2026 às 21:11)
+
+O Champion registrou que **os R$ 2.700/mês são provisórios**: a diretoria ainda não retornou sobre verba e o valor será **atualizado quando ela responder**.
+
+**Consequência para a implementação (requisito, não sugestão):** os valores da §3 não podem ser constantes no código. Eles são **parâmetros** — uma tabela de configuração com histórico de alteração (valor, data, quem alterou, motivo). Trocar a verba é editar o parâmetro, nunca mexer na regra.
+
+O que NÃO muda quando a verba mudar:
+
+- a faixa de autonomia da §4 (livre / aprovação / proibido) — é política, não valor;
+- a trilha de auditoria da §5 e o botão de pânico da §6;
+- o modo sombra da §8 e seus critérios de saída;
+- a regra do estouro da §3 (recusa + registro + faixa), que vale para qualquer valor.
+
+O que muda: apenas o teto mensal, o teto diário derivado e o teto por campanha (que é proporcional).
+
+**Cenários já preparados para a resposta da diretoria:**
+
+| Verba total aprovada | Meta | LinkedIn | O que passa a ser possível |
+|---:|---:|---:|---|
+| R$ 1.000 | R$ 1.000 | R$ 0 | LinkedIn desligado; canal único |
+| R$ 2.700 (atual) | R$ 1.000 | R$ 1.700 | Os dois no piso; dado fraco mas real |
+| R$ 3.700 | R$ 2.000 | R$ 1.700 | Meta com tração + LinkedIn no piso |
+| R$ 5.000+ | R$ 2.000 | R$ 3.000 (≈US$ 50/dia) | LinkedIn em nível que gera aprendizado |
+
+Quando o Champion trouxer o número da diretoria, a atualização é: (1) novo valor no parâmetro, (2) recálculo automático dos tetos diário e por campanha, (3) registro no changelog com data e origem. Sem nova emenda, porque a política já está aprovada — muda só a régua de gasto.
