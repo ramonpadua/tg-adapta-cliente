@@ -2,20 +2,20 @@
 
 - task_id: F3-T12
 - champion: João Paulo
-- spec: 04_fase-atual/specs/spec-f3-006-campanhas-meta-maestro.md
+- spec: 04-fase-atual/specs/spec-f3-006-campanhas-meta-maestro.md
 - fase: 3
 - task_elegivel: F3-T12 (selecionada)
-- tasks_fase_3: 1/13 concluídas (F3-T09); F3-T12 IMPLEMENTADA — aguardando teste humano; F3-T01 destravada pela emenda E-F3-001-04 (não é a task ativa)
+- tasks_fase_3: 1/13 concluídas (F3-T09); F3-T12 IMPLEMENTADA, prova humana 26/26 — CA-3-16 aberto (falta leitura real); F3-T01 destravada pela emenda E-F3-001-04 (não é a task ativa)
 - prazo_referencia: ajustável pelo Champion (referência inicial 30/09/2026 vencida; sem trava de prazo)
 - ambiente: Skip (GoSkip + SkipCloud) — projeto 51414 "Repositório Adapta"
 - etapa: aguardando_teste_humano
-- autorizacao_implementacao: confirmada — 2026-10-28 10:58, Champion/owner respondeu "SIm" à pergunta "Posso implementar este plano na F3-T12?" (relatório de análise entregue antes, em 28/10 10:05)
-- teste_humano: pendente (roteiro entregue 28/10 11:05; nada concluído antes da confirmação)
-- verificacao_automatica: passou — Skip v0.0.101 (ref 06fb4ca) QA setup/static/build/integrations OK; prova RED/GREEN/REGRESSÃO executada no navegador 26/26 (1a rodada 25/26 com falha real corrigida: núcleo não lia `actions` e contava aliases como descartados); coleções campanhas_meta (índice único campaign_id+data_referencia, escrita bloqueada na API) e conexao_meta criadas; rotas /campanhas e /campanhas/prova publicadas no preview. NÃO executado: leitura real contra a Meta (token do conector vencido desde 19/10 e conta de serviço do agendador não configurada)
+- autorizacao_implementacao: confirmada — 2026-10-28 10:58, Champion/owner respondeu "SIm" à pergunta "Posso implementar este plano na F3-T12?" (relatório de análise entregue antes, em 28/10 10:05); 2026-10-28 21:31, "vou com sua recomendação" autorizou a conta de serviço dedicada do agendador (caminho A)
+- teste_humano: parcialmente aprovado — 2026-10-28, o Champion executou a prova no navegador e enviou o PDF com 26/26 checagens (11 RED + 10 GREEN + 5 regressão). CA-3-16 CONTINUA ABERTO: comparar com o Gerenciador de Anúncios exige a leitura real, que depende da reconexão Meta
+- verificacao_automatica: passou — Skip v0.0.101 (ref 06fb4ca) QA setup/static/build/integrations OK; prova RED/GREEN/REGRESSÃO no navegador 26/26 (1a rodada 25/26 com falha real corrigida: núcleo não lia `actions`); Skip v0.0.102 (migration 0024, conta de serviço) e v0.0.103 (fix do header da rota interna) com QA OK; autenticação da conta de serviço comprovada por HTTP 200 (verified true, role vazio); rota interna exercitada ponta a ponta por curl (antes 401, depois 200); e-mail de falha comprovado no log de runtime (`status: sent`, assunto "Campanhas Meta: Conexao Meta expirada"); `conexao_meta` com 1 registro status=expirada e `campanhas_meta` com 0 — nada inventado na falha. NÃO executado: leitura real contra a Meta (token vencido desde 19/10/2026 10:00 PDT, erro 190/463)
 - aprendizado: pendente
-- ultima_acao: 2026-10-28 11:05 — F3-T12 IMPLEMENTADA (Skip v0.0.101, ref 06fb4ca): migrations 0022 (campanhas_meta + conexao_meta) e 0023 (cron pausado); núcleo puro + prova; telas /campanhas e /campanhas/prova; automação campanhas_meta_sync + _run + _cron
-- proxima_acao: teste humano do Champion no preview (/campanhas e /campanhas/prova) e confirmação para concluir
-- atualizado_em: 2026-10-28T11:05:00-03:00
+- ultima_acao: 2026-10-28 21:36 — F3-T12: infraestrutura de aviso e agendador consertada e comprovada (Skip v0.0.103). Segredo CHAMPION_EMAIL criado (jpaulo@talentgroup.com.br); remetente ajustado para "Talent Group · Adapta"; MAESTRO_INTERNAL_KEY criado (não existia); migration 0024 criou a conta de serviço do agendador com e-mail/senha via $secrets e role vazio (escopo mínimo); corrigido bug real da rota interna (cabeçalho chega como x_internal_key, não X-Internal-Key)
+- proxima_acao: reconectar a conta Meta pelo consentimento OAuth do conector; depois executar a leitura real e comparar com o Gerenciador de Anúncios na mesma data para fechar o CA-3-16
+- atualizado_em: 2026-10-28T21:36:00-03:00
 
 ## Defaults conservadores da F3-T01 (protocolo anti-trava — Constituição §Dúvidas e insumos, 07/10/2026)
 
