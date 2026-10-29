@@ -2,7 +2,7 @@
 
 - task_id: F3-T12
 - champion: João Paulo
-- spec: 04-fase-atual/specs/spec-f3-006-campanhas-meta-maestro.md
+- spec: 04_fase-atual/specs/spec-f3-006-campanhas-meta-maestro.md
 - fase: 3
 - task_elegivel: F3-T12 (selecionada)
 - tasks_fase_3: 1/13 concluídas (F3-T09); F3-T12 IMPLEMENTADA, prova humana 26/26 — CA-3-16 aberto (falta leitura real); F3-T01 destravada pela emenda E-F3-001-04 (não é a task ativa)
