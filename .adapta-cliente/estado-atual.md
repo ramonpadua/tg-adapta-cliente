@@ -2,7 +2,7 @@
 
 - task_id: F3-T12
 - champion: João Paulo
-- spec: 04_fase-atual/specs/spec-f3-006-campanhas-meta-maestro.md
+- spec: 04-fase-atual/specs/spec-f3-006-campanhas-meta-maestro.md
 - fase: 3
 - task_elegivel: F3-T12 (selecionada)
 - tasks_fase_3: 1/13 concluídas (F3-T09); F3-T12 com leitura real executada e CA-3-16 ATESTADO pelo owner em 30/10 — aguardando confirmação do teste humano para concluir; F3-T01 destravada pela emenda E-F3-001-04 (não é a task ativa)
@@ -11,11 +11,11 @@
 - etapa: aguardando_teste_humano
 - autorizacao_implementacao: confirmada — 2026-10-28 10:58, Champion/owner respondeu "SIm" à pergunta "Posso implementar este plano na F3-T12?" (relatório de análise entregue antes, em 28/10 10:05); 2026-10-28 21:31, "vou com sua recomendação" autorizou a conta de serviço dedicada do agendador (caminho A); 2026-10-30, owner escolheu "Caminho C" (comparação primeiro) e depois autorizou a troca de fonte para Graph API direta + reafirmou o aceite ("Sim — mesmo principal, mesmo somente-leitura")
 - teste_humano: parcialmente aprovado — 2026-10-28, o Champion executou a prova no navegador e enviou o PDF com 26/26 checagens (11 RED + 10 GREEN + 5 regressão); 2026-10-30, o OWNER atestou o CA-3-16 ("bateu") conferindo as 10 campanhas da janela 22–28/10 no Gerenciador de Anúncios. Falta a confirmação explícita do Champion (ou do owner como decisor) para o fechamento formal da task
-- verificacao_automatica: passou — Skip v0.0.117 (ref 6e27a41) QA setup/static/build/integrations OK; prova RED/GREEN/REGRESSÃO no navegador 26/26 (28/10); LEITURA REAL EXECUTADA em 30/10 02:47 UTC pela rota interna: campanhas_lidas=10, linhas_gravadas=70 (10 campanhas × 7 dias), criadas=0, atualizadas=70, erros=[], somente_leitura_meta=true, janela 22–28/10. Fonte: Graph API v21.0 direta, token no segredo META_ACCESS_TOKEN (principal João Paulo Oliveira, ads_read, sem expiração). Aceite da nova fonte reafirmado pelo owner em 30/10 e publicado em 06_notas/aceite-graph-api-f3-t12-2026-10-30.md (commit 3435693)
+- verificacao_automatica: passou — Skip v0.0.118 (ref edcd38e) QA setup/static/build/integrations OK; corrigido DEFEITO REAL encontrado na conferência visual do owner: `normalizarStatus` no hook fazia String(v===undefined||v===null||v==='') — convertia o resultado booleano da comparação, String(false)='false', e as 80 linhas foram gravadas com status_efetivo='desconhecido'. Depois do fix, nova execução real: 10 campanhas, 70 linhas, 1 active + 9 archived corretos; prova RED/GREEN/REGRESSÃO no navegador 26/26 (28/10); LEITURA REAL EXECUTADA em 30/10 02:47 UTC pela rota interna: campanhas_lidas=10, linhas_gravadas=70 (10 campanhas × 7 dias), criadas=0, atualizadas=70, erros=[], somente_leitura_meta=true, janela 22–28/10. Fonte: Graph API v21.0 direta, token no segredo META_ACCESS_TOKEN (principal João Paulo Oliveira, ads_read, sem expiração). Aceite da nova fonte reafirmado pelo owner em 30/10 e publicado em 06_notas/aceite-graph-api-f3-t12-2026-10-30.md (commit 3435693)
 - aprendizado: pendente
-- ultima_acao: 2026-10-30 02:55 — F3-T12: fonte trocada para Graph API direta (v0.0.117), leitura real executada com sucesso (10 campanhas, 70 linhas), CA-3-16 atestado pelo owner ("bateu"), evidência atualizada em 05_entregas/campanhas-f3.md (commit 73d9473) e aceite publicado (commit 3435693). Correção de diagnóstico registrada: o "defeito do effective_status" de 29/10 não era a causa de nada — o log de 29/10 15:05 UTC já mostrava 70 linhas pelo Composio; o parâmetro é necessário apenas a partir da troca de fonte
-- proxima_acao: confirmar com o Champion/owner o fechamento formal da F3-T12 (teste humano completo); depois, F3-T13 (provas de falha, idempotência e destino único) destrava
-- atualizado_em: 2026-10-30T02:58:00-03:00
+- ultima_acao: 2026-10-30 03:18 — F3-T12: defeito real corrigido (v0.0.118, ref edcd38e) após conferência visual do owner. `normalizarStatus` convertia o booleano da comparação em vez do valor e gravava 'desconhecido' em 80/80 linhas; corrigido e reexecutado (1 active + 9 archived). Evidência atualizada em 05_entregas/campanhas-f3.md (commit be3b61d). Antes: fonte trocada para Graph API direta (v0.0.117), leitura real executada, CA-3-16 atestado pelo owner
+- proxima_acao: confirmar com o Champion/owner o fechamento formal da F3-T12 (teste humano completo, agora com a tela exibindo a situação correta); depois, F3-T13 (provas de falha, idempotência e destino único) destrava
+- atualizado_em: 2026-10-30T00:20:00-03:00
 
 ## Defaults conservadores da F3-T01 (protocolo anti-trava — Constituição §Dúvidas e insumos, 07/10/2026)
 
