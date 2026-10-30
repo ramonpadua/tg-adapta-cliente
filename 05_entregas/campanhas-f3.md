@@ -1,6 +1,6 @@
 # Evidência — Tela Campanhas (F3-T12 · SPEC-F3-006)
 
-**Data:** 2026-10-28 · **Versão Skip:** 0.0.101 (ref `06fb4ca`) · **Champion:** João Paulo
+**Data:** 2026-10-28 · **Última atualização:** 2026-10-30 · **Versão Skip:** 0.0.117 (ref `6e27a41`) · **Champion:** João Paulo · **Owner:** Luiz Carlos Manni
 
 ## 1. O que foi entregue
 
@@ -10,14 +10,16 @@
 | Coleção `conexao_meta` (saúde da conexão) | Skip 51414 | Criada — 1 registro por execução |
 | Migration `0022_campanhas_meta` | código | Aplicada (não destrutiva; rollback remove só as duas coleções) |
 | Migration `0023_campanhas_meta_cron_pausado` | código | Aplicada — **agendador nasce pausado** |
+| Migration `0024_conta_servico_agendador` | código | Aplicada — conta de serviço com role vazio |
+| Migration `0025_campanhas_meta_cron_ativo` | código | Aplicada — agendador a cada 2h |
 | Núcleo puro (regras da SPEC) | `src/lib/f3/t12/nucleo.ts` | Implementado |
 | Bateria de prova | `src/lib/f3/t12/prova.ts` | 26 checagens |
 | Serviço de leitura | `src/services/campanhasMeta.ts` | Implementado — nenhuma função escreve |
 | Tela Campanhas | `/campanhas` | Publicada no preview |
 | Tela de prova | `/campanhas/prova` | Publicada no preview |
-| Automação (rota manual + porta interna + cron) | `pocketbase/hooks/campanhas_meta_{sync,run,cron}.js` | Implementada; **cron pausado** |
+| Automação (rota manual + porta interna + cron) | `pocketbase/hooks/campanhas_meta_{sync,run,cron}.js` | Implementada; cron a cada 2h |
 
-## 2. QA do Skip (v0.0.101)
+## 2. QA do Skip (v0.0.117)
 
 setup OK · análise estática OK · build OK · integrações OK · suíte do projeto não roda (`ran: false`).
 
@@ -31,22 +33,63 @@ Captura enviada pelo Champion (`maestro1.pdf`, 3 páginas, preview `/campanhas/p
 
 **Correção real encontrada pela própria prova:** a primeira execução deu **25/26** — o núcleo não lia `actions` (formato em que a Meta devolve "resultados") e contava aliases legítimos (`id`, `name`, `effective_status`) como campos descartados. Corrigido e comprovado em 26/26.
 
-## 4. O que a prova NÃO cobre (pendência declarada)
+## 4. Leitura real da Meta — EXECUTADA em 30/10/2026
 
-**A leitura real da Meta não foi executada.** Portanto o **CA-3-16 não está atendido** na sua exigência central — "iguais ao Gerenciador de Anúncios na mesma data de referência". A tela abre, mostra a faixa honesta ("Sem informação da conexão") e zeros legítimos, mas ainda não há número real de campanha.
+A pendência declarada em 28/10 (§4 da versão anterior) está **fechada**. Duas mudanças tornaram isso possível:
 
-Motivos, ambos externos ao código:
+1. **Fonte trocada de Composio para Graph API v21.0 direta** (v0.0.117). A conexão `adapta-tg` do Composio nunca completou o consentimento e ficou em `INITIATED`; a leitura real, por esse caminho, nunca saía.
+2. **Token do principal guardado no segredo `META_ACCESS_TOKEN`** do projeto 51414, lido em runtime por `$secrets.get`. Principal: **João Paulo Oliveira** (id `28957746507189663`) — o mesmo nomeado no aceite B3-META-LEITOR de 28/10. Escopo `ads_read`; sem expiração.
 
-1. **Acesso à Meta inválido** — o passe do conector usado pela automação está vencido desde 19/10 (erro 190/401 confirmado em 28/10). A automação usa a chave `COMPOSIO_API_KEY` (server-side) e não se sabe qual conta Meta está vinculada a ela nem se segue válida.
-2. **Conta de serviço do agendador não configurada** — para o robô rodar às 06:20 sem ninguém logado, faltam `SCHEDULER_SERVICE_EMAIL`/`SCHEDULER_SERVICE_PASSWORD`; e `CHAMPION_EMAIL` para o aviso de falha sair por e-mail (sem ele, o aviso fica só na faixa da tela).
+### Execução comprovada — 30/10/2026 02:47 UTC
 
-## 5. Nada foi escrito na Meta
+Retorno do próprio hook `POST /backend/v1/campanhas-meta/run`:
 
-A automação só chama `METAADS_LIST_CAMPAIGNS` e `METAADS_GET_INSIGHTS`; não existe no código nenhuma ação de escrita (RN-F3-025). Verificado por leitura dos três hooks.
+| Item | Resultado |
+|---|---|
+| `status` | `ok` |
+| `campanhas_lidas` | **10** |
+| `linhas_gravadas` | **70** (10 campanhas × 7 dias) |
+| `criadas` / `atualizadas` | 0 / 70 |
+| `erros` | `[]` |
+| `somente_leitura_meta` | `true` |
+| Janela | 22/10 a 28/10/2026 |
 
-## 6. Para fechar o CA-3-16
+### Correção de um diagnóstico anterior — registrar para não repetir
 
-1. Restabelecer o acesso à Meta usado pela automação (renovar/conectar a conta em `act_1667348577717128`).
-2. Configurar `CHAMPION_EMAIL` e a conta de serviço do agendador.
-3. Executar a leitura manual e comparar, campanha por campanha, com o Gerenciador de Anúncios na mesma data de referência.
-4. Só então ligar o agendador (migration com `disabled: false`).
+Em 29/10 foi registrado que o hook chamava a listagem **sem** `effective_status` e por isso via 1 campanha, escondendo R$ 146,19. **Esse diagnóstico estava errado.** O log `scripts/f3t12-rede-seguranca/execucoes.log` de **29/10 15:05 UTC, antes de qualquer alteração**, já registrava `linhas=70` = 10 campanhas × 7 dias: o Composio devolvia as 10. O que se mediu foi a **Graph API crua**, não o hook.
+
+O parâmetro `effective_status` foi mantido e é **necessário a partir de 30/10**, porque a fonte passou a ser a Graph API direta — sem ele, a tela mostraria 1 campanha. Ele previne um defeito que a troca de fonte teria criado, e não corrige um defeito anterior.
+
+## 5. CA-3-16 — atendido e atestado por humano
+
+**Atestação do owner (Luiz Carlos Manni), 30/10/2026:** conferência no Gerenciador de Anúncios, janela 22–28/10/2026, contra a tela `/campanhas` — resultado declarado: **"bateu"**.
+
+Números conferidos (fonte: Graph API; conferência humana no Gerenciador):
+
+| Campanha | Status | Gasto 7d | Impressões | Cliques |
+|---|---|---:|---:|---:|
+| [TG] [TESTE] [PANORAMA] [19/10/2026] | Arquivada | R$ 146,19 | 41.437 | 2.705 |
+| [TG] [TESTE] [PANORAMA] [19/10/2026] — Cópia | Ativa | R$ 0,00 na janela¹ | 0¹ | 0¹ |
+| Demais 8 campanhas (AYPLA, LEADS, RETARGETING) | Arquivadas | R$ 0,00 | 0 | 0 |
+
+¹ criada em 28/10, começou a veicular em 29/10 — o gasto dela fica fora da janela 22–28/10.
+
+**Documento de apoio:** `artifacts/CA-3-16_Folha_de_Conferencia_2026-10-30.md` (fora do repositório; gerado pelo Maestro).
+**Aceite da fonte:** `06_notas/aceite-graph-api-f3-t12-2026-10-30.md`.
+
+## 6. Nada foi escrito na Meta
+
+A automação só faz **GET** em `/campaigns` e `/insights` da Graph API; não existe no código nenhum POST, PUT ou DELETE contra a Meta (RN-F3-025). Verificado por leitura dos três hooks e confirmado no retorno de cada execução (`somente_leitura_meta: true`).
+
+## 7. Pendências que permanecem (não bloqueiam o CA-3-16)
+
+| Pendência | Situação |
+|---|---|
+| Conferência diária do agendador | cron interno a cada 2h + rede de segurança externa no ETHOS às 10:30 BRT |
+| Instância hiberna | cron interno morre com a instância, sem replay; por isso a rede de segurança externa |
+| `COMPOSIO_API_KEY` | permanece no projeto, sem uso pela T12 desde 30/10 |
+| CA-3-17 (F3-T13) | depende do aceite da F3-T12; provas de falha, idempotência e destino único |
+
+---
+
+*Evidência atualizada em 30/10/2026. Versão no ar: Skip 51414 v0.0.117, ref 6e27a41.*
