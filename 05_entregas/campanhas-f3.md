@@ -1,6 +1,6 @@
 # Evidência — Tela Campanhas (F3-T12 · SPEC-F3-006)
 
-**Data:** 2026-10-28 · **Última atualização:** 2026-10-30 · **Versão Skip:** 0.0.117 (ref `6e27a41`) · **Champion:** João Paulo · **Owner:** Luiz Carlos Manni
+**Data:** 2026-10-28 · **Última atualização:** 2026-10-30 · **Versão Skip:** 0.0.118 (ref `edcd38e`) · **Champion:** João Paulo · **Owner:** Luiz Carlos Manni
 
 ## 1. O que foi entregue
 
@@ -19,7 +19,7 @@
 | Tela de prova | `/campanhas/prova` | Publicada no preview |
 | Automação (rota manual + porta interna + cron) | `pocketbase/hooks/campanhas_meta_{sync,run,cron}.js` | Implementada; cron a cada 2h |
 
-## 2. QA do Skip (v0.0.117)
+## 2. QA do Skip (v0.0.118)
 
 setup OK · análise estática OK · build OK · integrações OK · suíte do projeto não roda (`ran: false`).
 
@@ -92,4 +92,23 @@ A automação só faz **GET** em `/campaigns` e `/insights` da Graph API; não e
 
 ---
 
-*Evidência atualizada em 30/10/2026. Versão no ar: Skip 51414 v0.0.117, ref 6e27a41.*
+## 8. Correção pós-atestação (30/10, v0.0.118, ref `edcd38e`)
+
+Ao abrir a tela `/campanhas`, o owner viu todas as situações como **"Desconhecido"**. Causa raiz, no hook `campanhas_meta_sync.js`:
+
+```js
+// ERRADO — convertia o RESULTADO BOOLEANO da comparação, não o valor:
+const s = String(v === undefined || v === null || v === '').trim().toLowerCase()
+// String(false) = 'false' → nenhum valor válido batia → tudo virava 'desconhecido'
+```
+
+Correção: `String(v === undefined || v === null || v === '' ? '' : v)`. Nova execução real em 30/10: 10 campanhas, 70 linhas atualizadas, `status_efetivo` correto (1 `active`, 9 `archived`). QA do Skip: setup/static/build/integrations OK.
+
+**Dois comportamentos da tela confirmados neste diagnóstico (não são defeitos):**
+
+1. **Sem login, a tela mostra zeros e "Sem informação da conexão".** As coleções têm `listRule: @request.auth.id != ''` (leitura só para autenticados, por design da SPEC). O acesso se estabelece pelo botão **"Entrar"** na tela Experimentos (`/experimentos`); a sessão fica guardada no navegador.
+2. **Consulta anônima à API devolve `totalItems: 0` mesmo com dado gravado** — não concluir "banco vazio" a partir de leitura sem sessão. Prova: sem sessão 0 registros; com sessão, 80 registros (28–29/10).
+
+---
+
+*Evidência atualizada em 30/10/2026. Versão no ar: Skip 51414 v0.0.118, ref `edcd38e`.*
