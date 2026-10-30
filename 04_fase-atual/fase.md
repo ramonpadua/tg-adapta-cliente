@@ -3,24 +3,17 @@
 <!-- fase-format:2 -->
 
 **Plano:** TG Mais Serviços de Tecnologia e RH LTDA · `6b09d189`  
-**Estado:** Fase 3 em execução; 1/13 tasks concluídas (F3-T09, com ressalvas). F3-T12 implementada, prova humana 26/26, CA-3-16 aberto por falta de leitura real. F3-T01 em andamento; E2 origem_dado aceita em 23/10; E2-coleções/E5/E6 documentalmente destravadas por E-F3-001-04, sem aceite de implementação dessas etapas.
+**Estado:** Fase 3 em execução; 1/13 tasks concluídas (F3-T09, com ressalvas). F3-T12 com leitura real executada em 30/10 (10 campanhas, 70 linhas) e **CA-3-16 atestado pelo owner** ("bateu"); aguarda confirmação do teste humano para concluir. F3-T01 em andamento; E2 origem_dado aceita em 23/10; E2-coleções/E5/E6 documentalmente destravadas por E-F3-001-04, sem aceite de implementação dessas etapas.  
 **Champion:** João Paulo  
-**Atualizado em:** 29/10/2026 pela consultoria — consolidação documental da E-F3-001-04, sem alteração de código/dados.
-**Regra:** uma task por vez; cada conclusão exige as provas da SPEC e o teste humano do Champion.
+**Prazo de referência:** sem trava de prazo (decisão de 07/10/2026); a referência inicial de 30/09/2026 venceu.  
+**Atualizado em:** 30/10/2026 pelo Maestro — leitura real da Meta executada e CA-3-16 atestado; sem alteração de código nesta atualização.
 
 ## Esta fase em linguagem simples
 
-Na Fase 3 o sistema passa a **mostrar** o caminho de cada demanda. Ao final, vocês vão ter no Skip (projeto **"repositório adapta"**):
-
-- **Funil** — um quadro em colunas (Kanban): cada cartão é uma empresa/demanda e mostra de onde veio (inbound ou outbound, canal, campanha), o que ela quer (R&S ou TMO), quem é o dono e a próxima ação. Clicando, aparece a história completa.
-- **Campanhas** — as campanhas Meta Ads (ativas ou pausadas, gasto, resultados), atualizadas todo dia por uma automação no Maestro, com aviso se a conexão cair.
-- **Gargalos** — quantas demandas há em cada etapa e onde estão travando.
-- **Passagens pendentes** — quando o comercial passa uma demanda para o R&S ou a alocação, para quem foi e se foi aceita.
-- **Área do DHO** — separada, só para o DHO.
-
-Enquanto a política de dados (LGPD) não for aprovada pela direção, as telas mostram **dados de teste**, marcados com o selo TESTE.
-
-**Como o Maestro vai trabalhar com vocês:** antes de cada task ele explica o que vai criar, combina cada passo ("vamos criar isso no Skip agora"), pede para vocês darem uma olhada no Skip depois de cada passo e fecha com um resumo do que já dá para ver e qual é a próxima task.
+A Fase 3 transforma o pipeline mínimo da F1 num sistema que mostra, na prática, onde cada demanda
+está, quanto tempo ela leva em cada etapa, quem precisa agir e o que está travado. Inclui duas telas
+novas pedidas na 5ª call: **Funil** (Kanban com origem e história) e **Campanhas** (números da Meta
+atualizados por automação).
 
 ## Ordem recomendada (sequência de referência; situação vigente abaixo)
 
@@ -30,7 +23,9 @@ F3-T01 → F3-T09 → F3-T10 → F3-T11 → F3-T12 → F3-T13 → F3-T02 → F3-
 
 **Consolidação documental de 29/10/2026:** E-F3-001-04 vigente; D1–D6 decididas. E2-coleções/E5/E6 não aguardam nova decisão D4/D5/D6. A implementação pendente continua sujeita à autorização do Champion, às provas da SPEC e ao teste humano. Nenhuma task foi concluída por esta correção; nenhum código ou dado foi alterado.
 
-F3-T12 continua ativa: concluir a leitura real/comparação ou registrar pausa segura explícita antes de retomar F3-T01. A ordem abaixo não reabre F3-T09 nem autoriza duas tasks simultâneas. F3-T10 segue dependente de F3-T01 integralmente aceita.
+**Atualização de 30/10/2026:** a leitura real da Meta foi executada com sucesso (10 campanhas, 70 linhas, janela 22–28/10) pela fonte Graph API direta, e o CA-3-16 foi **atestado pelo owner** na conferência contra o Gerenciador de Anúncios. Registro: `05_entregas/campanhas-f3.md`; aceite da fonte: `06_notas/aceite-graph-api-f3-t12-2026-10-30.md`.
+
+F3-T12 continua ativa até a confirmação do teste humano: a leitura real foi executada e o CA-3-16 foi atestado pelo owner em 30/10 (fonte Graph API direta). Depois, concluir ou registrar pausa segura explícita antes de retomar F3-T01. A ordem abaixo não reabre F3-T09 nem autoriza duas tasks simultâneas. F3-T10 segue dependente de F3-T01 integralmente aceita.
 
 ## Jornada operacional
 
@@ -56,21 +51,21 @@ F3-T12 continua ativa: concluir a leitura real/comparação ou registrar pausa s
   > F3-T07 · SPEC F3-004 · CA-3-09. Criar objeto inativo com fixture, permissões server-side e prova negativa de leitura comercial; registrar decisão C-06. Depende de F3-T01 aceita; dado real permanece bloqueado por B3-DHO-01.
   > Onde executar: Maestro → Skip "repositório adapta". O que você vai ver: área separada, só do DHO, com um sinal da conta em dado de teste; o comercial não vê essa área.
 - [ ] Provar isolamento, lista fechada, encaminhamento humano e fail-closed sem política @"João Paulo" #projeto
-  > F3-T08 · SPEC F3-004 · CA-3-09/10. Provar sinal autorizado em fixture, isolamento, duplicata, rollback e encaminhamento humano; nenhum sinal fora da lista ou dado real. Depende de F3-T07 aceita.
-  > Onde executar: Maestro → Skip "repositório adapta". O que você vai ver: a prova de que o comercial não vê o sinal e que o sinal vira encaminhamento para uma pessoa.
-- [x] Diagnosticar no Maestro as automações ativas, o destino dos leads da landing page e as campanhas Meta, sem alterar nada @"João Paulo" [interno] #projeto
-  > F3-T09 · SPEC F3-006 · CA-3-15. Somente leitura: listar automações e destinos, confirmar a parada da automação do "Hub de gestão Meta Ads", achar para onde vai o formulário da landing page e listar as campanhas. Parar e chamar o consultor se os leads estiverem indo para fora do projeto oficial.
-  > Onde executar: Maestro (somente leitura). O que você vai ver: um relatório curto dizendo quais automações estão ligadas, para onde cada uma manda dados, para onde vão os leads do formulário e quais campanhas estão ativas.
-- [ ] Construir a tela Funil (Kanban) com cartões, origem, filtros e Jornada usando os dados de teste @"João Paulo" [interno] #projeto
-  > F3-T10 · SPEC F3-005 · CA-3-13. Colunas por etapa, cartão com origem/canal/campanha/serviço/área/dono/próxima ação, selo TESTE, filtros e Jornada do cartão. Depende de F3-T01 aceita.
+  > F3-T08 · SPEC F3-004 · CA-3-09/10. Provar isolamento, duplicata, rollback e encaminhamento humano com lista versionada. Depende de F3-T07 aceita.
+  > Onde executar: Maestro → Skip "repositório adapta". O que você vai ver: a prova de que o comercial não vê o sinal, só sinais da lista entram e o sinal vira encaminhamento para uma pessoa.
+- [x] Diagnosticar no Maestro as automações ativas, o destino dos leads da landing page e as campanhas Meta, sem alterar nada @"João Paulo" #projeto
+  > F3-T09 · SPEC F3-006 · CA-3-15. Concluída em 24/10 com ressalvas (CA-3-15 parcial; Hub 57113 permanece ativo até substituto aprovado).
+  > Onde executar: Maestro (somente leitura). O que você vai ver: relatório `diagnostico-maestro-f3-t09.md` com automações, destinos, landing page e campanhas.
+- [ ] Construir a tela Funil (Kanban) com cartões, origem, filtros e Jornada usando os dados de teste @"João Paulo" #projeto
+  > F3-T10 · SPEC F3-005 · CA-3-13. Colunas por etapa, cartão com origem/canal/campanha/serviço/área/dono/próxima ação, selo TESTE, filtros e Jornada completa. Depende de F3-T01 integralmente aceita.
   > Onde executar: Maestro → Skip "repositório adapta". O que você vai ver: tela "Funil" em colunas por etapa; cada cartão mostra de onde a demanda veio, o serviço, o dono e a próxima ação; clicando, a história completa.
-- [ ] Provar o Funil: origem desconhecida, arrastar sem evidência, contagens e regressão do painel @"João Paulo" [interno] #projeto
+- [ ] Provar o Funil: origem desconhecida, arrastar sem evidência, contagens e regressão do painel @"João Paulo" #projeto
   > F3-T11 · SPEC F3-005 · CA-3-13/14. RED/GREEN/regressão da SPEC. Depende de F3-T10 aceita.
   > Onde executar: Maestro → Skip "repositório adapta". O que você vai ver: a prova de que o Funil mostra "desconhecido" quando falta origem, recusa mover cartão sem evidência e tem as mesmas contagens da fonte.
-- [ ] Criar a tela Campanhas e a automação diária do Maestro que lê a Meta e grava só no projeto oficial @"João Paulo" [interno] #projeto
-  > F3-T12 · SPEC F3-006 · CA-3-16. Coleções campanhas_meta/conexao_meta, página Campanhas, ficha da automação e execução manual conferida com o Gerenciador de Anúncios. Depende de F3-T09 aceita e B3-META-LEITOR resolvido.
-  > Onde executar: Maestro (automação agendada) → Skip "repositório adapta". O que você vai ver: tela "Campanhas" com cada campanha Meta — ativa ou pausada, orçamento, gasto, impressões, cliques, resultados e hora da atualização.
-- [ ] Provar conexão expirada, reexecução sem duplicar, destino único e nenhuma escrita na Meta @"João Paulo" [interno] #projeto
+- [/] Criar a tela Campanhas e a automação diária do Maestro que lê a Meta e grava só no projeto oficial @"João Paulo" #projeto
+  > F3-T12 · SPEC F3-006 · CA-3-16. Coleções campanhas_meta/conexao_meta, página Campanhas, ficha da automação e execução manual conferida com o Gerenciador de Anúncios. **Leitura real executada em 30/10 (10 campanhas, 70 linhas) e CA-3-16 atestado pelo owner.** Falta a confirmação do teste humano para concluir.
+  > Onde executar: Maestro (automação agendada) → Skip "repositório adapta". O que você vai ver: tela "Campanhas" com cada campanha Meta: ativa ou pausada, orçamento, gasto, impressões, cliques, resultados e hora da atualização.
+- [ ] Provar conexão expirada, reexecução sem duplicar, destino único e nenhuma escrita na Meta @"João Paulo" #projeto
   > F3-T13 · SPEC F3-006 · CA-3-16/17. RED/GREEN/regressão da SPEC. Depende de F3-T12 aceita.
   > Onde executar: Maestro → Skip "repositório adapta". O que você vai ver: a prova de que, se a conexão cair, aparece um aviso na tela e chega um e-mail, sem apagar os números de antes; e que nada é escrito na Meta.
 
@@ -82,7 +77,7 @@ F3-T12 continua ativa: concluir a leitura real/comparação ou registrar pausa s
 | F3-T09 | 1 | Diagnosticar no Maestro as automações ativas, o destino dos leads da landing page e as campanhas Meta, sem alterar nada. | Maestro (somente leitura) | Um relatório curto: quais automações estão ligadas, para onde cada uma manda dados, para onde vão os leads do formulário e quais campanhas estão ativas. | João Paulo | F3-006 | CA-3-15 | Fluxo e regras (passos 1–2); Checklist | Perguntas ao Maestro e conferência no Skip; nenhuma criação ou alteração. | `diagnostico-maestro-f3-t09.md` com automações, destinos, landing page e campanhas. | Conectores Meta e Skip ativos no Maestro. | Parar se encontrar destino de leads fora do projeto oficial ou desconhecido (BLOQUEIO ao consultor). | CONCLUÍDA 24/10 com ressalvas; preservar diagnóstico e ressalvas de CA-3-15, Hub e leads |
 | F3-T10 | 2 | Construir a tela Funil (Kanban) com cartões, origem, filtros e Jornada usando os dados de teste. | Maestro → Skip "repositório adapta" | Tela "Funil" em colunas por etapa; cada cartão mostra de onde a demanda veio, o serviço, o dono e a próxima ação; clicando, a história completa. | João Paulo | F3-005 | CA-3-13 | Dados e integrações; Fluxo e regras; Checklist | Colunas, cartões, filtros e Jornada com os fixtures da F3-T01. | Capturas do Funil e da Jornada + comparação fonte×tela. | F3-T01 aceita por teste humano. | Parar se precisar de campo inexistente, regra automática de qualificação ou dado de contato real. | BLOQUEADA (F3-T01) |
 | F3-T11 | 3 | Provar o Funil: origem desconhecida, arrastar sem evidência, contagens e regressão do painel. | Maestro → Skip "repositório adapta" | A prova de que o Funil mostra "desconhecido" quando falta origem, recusa mover cartão sem evidência e tem as mesmas contagens da fonte. | João Paulo | F3-005 | CA-3-13, CA-3-14 | Critérios de aceite; TDD da SPEC | RED/GREEN/regressão da SPEC-F3-005. | Bateria humana + log de transições + comparação fonte×tela. | F3-T10 aceita por teste humano. | Parar se o cartão mover sem evidência ou a contagem divergir da fonte. | BLOQUEADA (F3-T10) |
-| F3-T12 | 2 | Criar a tela Campanhas e a automação diária do Maestro que lê a Meta e grava só no projeto oficial. | Maestro (automação agendada) → Skip "repositório adapta" | Tela "Campanhas" com cada campanha Meta: ativa ou pausada, orçamento, gasto, impressões, cliques, resultados e hora da atualização. | João Paulo | F3-006 | CA-3-16 | Dados e integrações; Fluxo e regras (passo 3); Checklist | Coleções `campanhas_meta`/`conexao_meta`, página e ficha da automação; execução manual conferida com o Gerenciador. | Ficha da automação + capturas tela × Gerenciador de Anúncios. | F3-T09 aceita; B3-META-LEITOR resolvido. | Parar se a ação exigir escrita na Meta, segredo no chat ou outro projeto de destino. | IMPLEMENTADA — prova humana 26/26; CA-3-16 aberto (leitura real Meta e comparação); permanece task ativa |
+| F3-T12 | 2 | Criar a tela Campanhas e a automação diária do Maestro que lê a Meta e grava só no projeto oficial. | Maestro (automação agendada) → Skip "repositório adapta" | Tela "Campanhas" com cada campanha Meta: ativa ou pausada, orçamento, gasto, impressões, cliques, resultados e hora da atualização. | João Paulo | F3-006 | CA-3-16 | Dados e integrações; Fluxo e regras (passo 3); Checklist | Coleções `campanhas_meta`/`conexao_meta`, página e ficha da automação; execução manual conferida com o Gerenciador. | Ficha da automação + capturas tela × Gerenciador de Anúncios. | F3-T09 aceita; B3-META-LEITOR resolvido. | Parar se a ação exigir escrita na Meta, segredo no chat ou outro projeto de destino. | IMPLEMENTADA — leitura real executada 30/10 (10 campanhas, 70 linhas); CA-3-16 ATESTADO pelo owner ("bateu"); falta confirmação do teste humano para concluir |
 | F3-T13 | 3 | Provar conexão expirada, reexecução sem duplicar, destino único e nenhuma escrita na Meta. | Maestro → Skip "repositório adapta" | A prova de que, se a conexão cair, aparece um aviso na tela e chega um e-mail, sem apagar os números de antes; e que nada é escrito na Meta. | João Paulo | F3-006 | CA-3-16, CA-3-17 | Critérios de aceite; TDD da SPEC | RED/GREEN/regressão da SPEC-F3-006. | Log das execuções + e-mail recebido + bateria humana. | F3-T12 aceita por teste humano. | Parar se houver escrita na Meta, duplicação ou gravação fora do projeto oficial. | BLOQUEADA (F3-T12) |
 | F3-T02 | 2 | Provar jornada dupla, retorno da operação, escalonamento e equivalência entre duas pessoas. | Maestro → Skip "repositório adapta" | Um roteiro em que duas pessoas classificam os mesmos casos e chegam à mesma etapa, com "passou / não passou" por caso. | João Paulo | F3-001 | CA-3-01..04 | Critérios de aceite; TDD | RED/GREEN/regressão, replay e bateria de equivalência. | Bateria humana + log + comparação fonte×painel. | F3-T01 aceita; B3-RACI-01 para a prova de handoff. | Parar sem critério de classificação ou matriz nominal. | BLOQUEADA (F3-T01, B3-RACI-01) |
 | F3-T03 | 3 | Materializar visões de gargalo, tempos e retorno no dashboard com massa sintética. | Maestro → Skip "repositório adapta" | Tela "Gargalos": quantas demandas há em cada etapa, quanto tempo levam entre etapas e quais estão paradas além do prazo. | João Paulo | F3-002 | CA-3-11 (E-F3-002-01) | Dados e integrações; Fluxo e regras; Checklist | Visões por estado, gargalo, tempos e retorno; KPI contra alvo bloqueado. | Captura/export com contagens reproduzíveis. | F3-T01 aceita. | Parar se a contagem não reproduzir a fonte ou se pedirem KPI sem alvo. | BLOQUEADA (F3-T01) |
@@ -97,12 +92,12 @@ F3-T12 continua ativa: concluir a leitura real/comparação ou registrar pausa s
 | Automação | Task | Lê | Grava | Nunca faz | Aviso de falha | Estado |
 |---|---|---|---|---|---|---|
 | Diária de Meta Ads → "Hub de gestão Meta Ads" | — (sem task) | Meta Ads | projeto Skip paralelo | — | — | **Parar** (pedido na call de 22/10); confirmar na F3-T09 |
-| Campanhas Meta → "repositório adapta" | F3-T12/F3-T13 | métricas de campanha da conta `act_1667348577717128` | `campanhas_meta`, `conexao_meta` | escrever na Meta; ler dado pessoal; gravar em outro projeto | faixa na tela + e-mail ao Champion | Implementada, cron pausado; falta leitura real, comparação CA-3-16 e aceite |
+| Campanhas Meta → "repositório adapta" | F3-T12/F3-T13 | métricas de campanha da conta `act_1667348577717128` (Graph API v21.0 direta, token em `META_ACCESS_TOKEN`) | `campanhas_meta`, `conexao_meta` | escrever na Meta; ler dado pessoal; gravar em outro projeto | faixa na tela + e-mail ao Champion | **Leitura real ativa** — 10 campanhas / 70 linhas em 30/10; cron a cada 2h |
 
 ## Bloqueios transversais
 
 - **B3-META-01 (alterado 22/10):** a F3 só lê métricas de campanha Meta pela automação da SPEC-F3-006; sem dado pessoal e sem escrita na Meta.
-- **B3-META-LEITOR:** resolvido pelo aceite escrito de 28/10, alternativa B da SPEC F3-006; permanece somente leitura. Isso não substitui reconexão OAuth nem leitura real da Meta.
+- **B3-META-LEITOR:** resolvido pelo aceite escrito de 28/10 (alternativa B da SPEC F3-006) e **reafirmado em 30/10** para a fonte Graph API direta (`06_notas/aceite-graph-api-f3-t12-2026-10-30.md`); permanece somente leitura.
 - **B3-LGPD-01 (formalizado 22/10):** dado real de contato só aparece após política aprovada pela direção; até lá, selo TESTE.
 - **B3-ID-01:** identidade por fonte; sem dedupe por inferência.
 - **B3-MET-01:** alvo, fórmula, período e lead qualificado antes de KPI de resultado.
