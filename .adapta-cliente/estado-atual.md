@@ -1,21 +1,21 @@
 # Estado atual — Adapta Cliente
 
-- task_id: F3-T12
+- task_id: nenhuma
 - champion: João Paulo
-- spec: 04-fase-atual/specs/spec-f3-006-campanhas-meta-maestro.md
+- spec: 04-fase-atual/specs/spec-f3-006-campanhas-meta-maestro.md (concluída)
 - fase: 3
-- task_elegivel: F3-T12 (selecionada)
-- tasks_fase_3: 1/13 concluídas (F3-T09); F3-T12 com leitura real executada e CA-3-16 ATESTADO pelo owner em 30/10 — aguardando confirmação do teste humano para concluir; F3-T01 destravada pela emenda E-F3-001-04 (não é a task ativa)
+- task_elegivel: F3-T01 (próxima; exige autorização antes de implementar)
+- tasks_fase_3: 2/13 concluídas (F3-T09, F3-T12); F3-T01 destravada pela emenda E-F3-001-04, próxima a executar
 - prazo_referencia: ajustável pelo Champion (referência inicial 30/09/2026 vencida; sem trava de prazo)
 - ambiente: Skip (GoSkip + SkipCloud) — projeto 51414 "Repositório Adapta"
-- etapa: aguardando_teste_humano
+- etapa: sem_task
 - autorizacao_implementacao: confirmada — 2026-10-28 10:58, Champion/owner respondeu "SIm" à pergunta "Posso implementar este plano na F3-T12?" (relatório de análise entregue antes, em 28/10 10:05); 2026-10-28 21:31, "vou com sua recomendação" autorizou a conta de serviço dedicada do agendador (caminho A); 2026-10-30, owner escolheu "Caminho C" (comparação primeiro) e depois autorizou a troca de fonte para Graph API direta + reafirmou o aceite ("Sim — mesmo principal, mesmo somente-leitura")
-- teste_humano: parcialmente aprovado — 2026-10-28, o Champion executou a prova no navegador e enviou o PDF com 26/26 checagens (11 RED + 10 GREEN + 5 regressão); 2026-10-30, o OWNER atestou o CA-3-16 ("bateu") conferindo as 10 campanhas da janela 22–28/10 no Gerenciador de Anúncios. Falta a confirmação explícita do Champion (ou do owner como decisor) para o fechamento formal da task
-- verificacao_automatica: passou — Skip v0.0.118 (ref edcd38e) QA setup/static/build/integrations OK; corrigido DEFEITO REAL encontrado na conferência visual do owner: `normalizarStatus` no hook fazia String(v===undefined||v===null||v==='') — convertia o resultado booleano da comparação, String(false)='false', e as 80 linhas foram gravadas com status_efetivo='desconhecido'. Depois do fix, nova execução real: 10 campanhas, 70 linhas, 1 active + 9 archived corretos; prova RED/GREEN/REGRESSÃO no navegador 26/26 (28/10); LEITURA REAL EXECUTADA em 30/10 02:47 UTC pela rota interna: campanhas_lidas=10, linhas_gravadas=70 (10 campanhas × 7 dias), criadas=0, atualizadas=70, erros=[], somente_leitura_meta=true, janela 22–28/10. Fonte: Graph API v21.0 direta, token no segredo META_ACCESS_TOKEN (principal João Paulo Oliveira, ads_read, sem expiração). Aceite da nova fonte reafirmado pelo owner em 30/10 e publicado em 06_notas/aceite-graph-api-f3-t12-2026-10-30.md (commit 3435693)
-- aprendizado: pendente
-- ultima_acao: 2026-10-30 03:18 — F3-T12: defeito real corrigido (v0.0.118, ref edcd38e) após conferência visual do owner. `normalizarStatus` convertia o booleano da comparação em vez do valor e gravava 'desconhecido' em 80/80 linhas; corrigido e reexecutado (1 active + 9 archived). Evidência atualizada em 05_entregas/campanhas-f3.md (commit be3b61d). Antes: fonte trocada para Graph API direta (v0.0.117), leitura real executada, CA-3-16 atestado pelo owner
-- proxima_acao: confirmar com o Champion/owner o fechamento formal da F3-T12 (teste humano completo, agora com a tela exibindo a situação correta); depois, F3-T13 (provas de falha, idempotência e destino único) destrava
-- atualizado_em: 2026-10-30T00:20:00-03:00
+- teste_humano: APROVADO — 2026-10-28, o Champion executou a prova no navegador e enviou o PDF com 26/26 checagens (11 RED + 10 GREEN + 5 regressão); 2026-10-30, o OWNER atestou o CA-3-16 conferindo as 10 campanhas da janela 22–28/10 no Gerenciador de Anúncios ("bateu"); 2026-11-03 17:19, o OWNER reenviou a tela `/campanhas` recarregada e os sete números do último retrato (10 campanhas, 1 ativa, gasto R$ 17,56, 4.663 impressões, 184 cliques, 113 resultados) foram conferidos campo a campo contra a Graph API e batem. Fechamento autorizado pelo decisor
+- verificacao_automatica: passou — Skip v0.0.120 (ref 5d5c261) QA setup/static/build/integrations OK. LEITURA REAL EXECUTADA em 30/10 02:47 UTC: campanhas_lidas=10, linhas_gravadas=70, erros=[], somente_leitura_meta=true. TRÊS DEFEITOS REAIS encontrados pela conferência visual do owner e corrigidos: (1) v0.0.118 — `normalizarStatus` convertia o booleano da comparação (String(false)='false') e gravava 'desconhecido' em 80/80 linhas; (2) v0.0.119 — a tela não tinha porta de entrada própria e, sem sessão, mostrava zeros e "Sem informação da conexão" (as coleções exigem `listRule: @request.auth.id != ''`); (3) v0.0.120 — `resultados` somava os 13 itens de `actions` da Meta (engajamento + conversão + duplicata omni_*), mostrando 654 onde o real era 113; agora `escolherResultado()` pega 1 tipo por objetivo. CONFERÊNCIA FINAL (03/11 17:19) contra a Graph API, campo a campo: 10 campanhas, 1 ativa, gasto R$ 17,56, 4.663 impressões, 184 cliques, 113 resultados — todos batem; 9 arquivadas com zero em tudo e orçamentos/dia conferem. Rotina diária estável: 31/10 a 03/11, 70 linhas por execução, zero erro. Fonte: Graph API v21.0 direta, token no segredo META_ACCESS_TOKEN (principal João Paulo Oliveira, ads_read, sem expiração), somente GET.
+- aprendizado: capturado:06_notas/aprendizado-continuo/AP-2026-11-03-1719-conferencia-visual-campo-calculado.md
+- ultima_acao: 2026-11-03 17:19 — F3-T12 CONCLUÍDA. Owner conferiu a tela `/campanhas` recarregada e os sete números batem com a Graph API; terceiro defeito (campo `resultados` somando 13 tipos de `action`) corrigido em v0.0.120. Antes: 2026-10-30 03:18 — defeito real corrigido (v0.0.118, ref edcd38e) após conferência visual do owner; `normalizarStatus` convertia o booleano da comparação em vez do valor e gravava 'desconhecido' em 80/80 linhas. Antes disso: fonte trocada para Graph API direta (v0.0.117), leitura real executada, CA-3-16 atestado pelo owner
+- proxima_acao: apresentar o plano da F3-T01 e pedir autorização antes de implementar (migrations 0026/0027: `propostas`, `vagas` e log append-only; materializar os 3 fixtures; regras de retorno e escalonamento). F3-T13 destrava em paralelo quando o Champion quiser
+- atualizado_em: 2026-11-03T17:19:00-03:00
 
 ## Defaults conservadores da F3-T01 (protocolo anti-trava — Constituição §Dúvidas e insumos, 07/10/2026)
 
@@ -37,4 +37,4 @@ NENHUMA — D1–D6 resolvidas pela emenda E-F3-001-04 (26/10/2026), conferida 1
 
 SPEC F3-001, fase.md, Tasks Gerais, matriz e fixtures foram alinhados com E-F3-001-04. D4/D5/D6 não são bloqueios documentais vigentes; não perguntar novamente onde persiste o retorno, quais motivos encerram substituição ou se a recuperação usa 3 tentativas/90 dias/confirmação humana.
 
-Esta atualização não muda a task ativa F3-T12, não conclui F3-T01 nem comprova E2-coleções/E5/E6. Histórico técnico de 28/10 e aceites anteriores preservados integralmente. O Champion encerra T12 ou registra pausa segura antes de retomar T01; uma task por vez. E4 continua plano sem emenda/task liberada; dados pessoais reais continuam condicionados à política LGPD aprovada.
+Esta atualização não muda o resultado acima (F3-T12 concluída em 03/11), não conclui F3-T01 nem comprova E2-coleções/E5/E6. Histórico técnico de 28/10 e aceites anteriores preservados integralmente. Com a T12 concluída, a próxima é a F3-T01, que exige autorização do Champion antes de implementar; uma task por vez. E4 continua plano sem emenda/task liberada; dados pessoais reais continuam condicionados à política LGPD aprovada.
