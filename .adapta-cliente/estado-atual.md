@@ -9,11 +9,11 @@
 - prazo_referencia: ajustável pelo Champion (referência inicial 30/09/2026 vencida; sem trava de prazo)
 - ambiente: Skip (GoSkip + SkipCloud) — projeto 51414 "Repositório Adapta"
 - etapa: aguardando_autorizacao
-- autorizacao_implementacao: ausente para a T10. Autorizações anteriores: 2026-10-28 10:58 (F3-T12, "SIm"); 2026-10-28 21:31 (conta de serviço do agendador, "vou com sua recomendação"); 2026-10-30 (fonte Graph API direta); 2026-11-04 14:30 (refazer testes da F3-T13 com o token oficial); 2026-11-04 17:35 ("Autorizo retomar exclusivamente a F3-T10/T11, referente à tela Funil" — autoriza a ANÁLISE e a implementação em etapas, mas a skill exige o relatório antes do primeiro código)
-- teste_humano: APROVADO até a F3-T13 (homologada em 04/11 14:53). PENDENTE para T10/T11 — owner definiu: "Não conclua T10/T11 sem os testes previstos e minha homologação".
-- verificacao_automatica: pendente para a T10 (nada implementado ainda). Baseline preservado a conferir a cada etapa: demandas=13, propostas=2, vagas=2, pipeline_log=2, campanhas_meta=130, conexao_meta=114, experimentos_f2=3, decisoes_f2=6.
-- aprendizado: capturado:06_notas/aprendizado-continuo/AP-2026-11-04-1453-prova-de-falha-real.md
-- ultima_acao: 2026-11-04 17:40 — análise da F3-T10/T11 ENTREGUE, nada implementado. SPEC-F3-005 lida integralmente; estado real do app conferido (sem página Funil; sem migration necessária).
+- autorizacao_implementacao: AUSENTE para a T10. Autorizações anteriores preservadas: 2026-10-28 10:58 (F3-T12, "SIm"); 2026-10-28 21:31 (conta de serviço do agendador); 2026-10-30 (fonte Graph API direta); 2026-11-04 14:30 (refazer testes da F3-T13 com o token oficial); 2026-11-04 17:35 ("Autorizo retomar exclusivamente a F3-T10/T11, referente à tela Funil" — pede análise antes de implementar e etapas testáveis)
+- teste_humano: APROVADO até a F3-T13 (F3-T12: PDF 26/26 em 28/10, CA-3-16 atestado em 30/10, tela conferida em 03/11; F3-T13: homologada em 04/11 14:53 — "Aprovado — pode concluir a T13"). PENDENTE para T10/T11: o owner definiu "Não conclua T10/T11 sem os testes previstos e minha homologação".
+- verificacao_automatica: pendente para a T10 (nada implementado). Passou na F3-T13: v0.0.146 — prova de falha real (e-mail confirmado no log, faixa na tela, 130 linhas intactas, zero escrita na Meta), 0 criadas/70 atualizadas, 0 duplicados. Baseline a revalidar a cada etapa da T10: demandas=13, propostas=2, vagas=2, pipeline_log=2, campanhas_meta=130, conexao_meta=114, experimentos_f2=3, decisoes_f2=6.
+- aprendizado: capturado:06_notas/aprendizado-continuo/AP-2026-11-03-1719-conferencia-visual-campo-calculado.md
+- ultima_acao: 2026-11-04 17:40 — análise da F3-T10/T11 ENTREGUE, nada implementado. Antes: 15:02 — F3-T13 CONCLUÍDA (v0.0.146), verificação refeita do zero, quatro defeitos reais corrigidos.
 - proxima_acao: aguardar autorização para implementar a T10 — análise entregue em 04/11 17:40; T11 só inicia após T10 aceita por teste humano
 - atualizado_em: 2026-11-04T17:40:00-03:00
 
