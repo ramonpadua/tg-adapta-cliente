@@ -8,14 +8,14 @@
 - tasks_fase_3: 4/13 concluídas (F3-T09, F3-T12, F3-T01, F3-T13)
 - prazo_referencia: ajustável pelo Champion (referência inicial 30/09/2026 vencida; sem trava de prazo)
 - ambiente: Skip (GoSkip + SkipCloud) — projeto 51414 "Repositório Adapta"
-- etapa: aguardando_autorizacao
-- autorizacao_implementacao: AUSENTE para a T10. Autorizações anteriores preservadas: 2026-10-28 10:58 (F3-T12, "SIm"); 2026-10-28 21:31 (conta de serviço do agendador); 2026-10-30 (fonte Graph API direta); 2026-11-04 14:30 (refazer testes da F3-T13 com o token oficial); 2026-11-04 17:35 ("Autorizo retomar exclusivamente a F3-T10/T11, referente à tela Funil" — pede análise antes de implementar e etapas testáveis)
-- teste_humano: APROVADO até a F3-T13 (F3-T12: PDF 26/26 em 28/10, CA-3-16 atestado em 30/10, tela conferida em 03/11; F3-T13: homologada em 04/11 14:53 — "Aprovado — pode concluir a T13"). PENDENTE para T10/T11: o owner definiu "Não conclua T10/T11 sem os testes previstos e minha homologação".
-- verificacao_automatica: pendente para a T10 (nada implementado). Passou na F3-T13: v0.0.146 — prova de falha real (e-mail confirmado no log, faixa na tela, 130 linhas intactas, zero escrita na Meta), 0 criadas/70 atualizadas, 0 duplicados. Baseline a revalidar a cada etapa da T10: demandas=13, propostas=2, vagas=2, pipeline_log=2, campanhas_meta=130, conexao_meta=114, experimentos_f2=3, decisoes_f2=6.
+- etapa: aguardando_teste_humano
+- autorizacao_implementacao: CONFIRMADA para a T10 — 2026-11-04 17:41, owner: "Autorizo iniciar exclusivamente a implementação da F3-T10, começando pela etapa E1 — colunas e contagens do Funil". Sequência E1→E5 com parada para homologação após cada etapa; T11 só depois da T10 integral. Autorizações anteriores preservadas: 2026-10-28 10:58 (F3-T12); 2026-10-28 21:31 (agendador); 2026-10-30 (Graph API direta); 2026-11-04 14:30 (testes F3-T13 com token oficial); 2026-11-04 17:35 (retomar T10/T11).
+- teste_humano: E1 ENTREGUE ao owner em 04/11 17:45, aguardando homologação. Fases anteriores: F3-T13 homologada 04/11 14:53; F3-T12 em 03/11. T10/T11 pendentes por decisão do owner: "Não conclua T10/T11 sem os testes previstos e minha homologação".
+- verificacao_automatica: E1 PASSOU — Skip v0.0.147 (ref c73a040), QA setup/static/build/integrations OK. Contagem conferida contra a fonte: suspect 9, prospect 1, oportunidade 3, demais 0, encerrados 0; soma das colunas 13 = total da fonte 13. Contadores de topo: sem origem 2, sem canal 2, sem campanha 6, prazo vencido 9, de teste 13. BASELINE PRESERVADO: demandas 13, propostas 2, vagas 2, pipeline_log 2, campanhas_meta 130, conexao_meta 114, experimentos_f2 3, decisoes_f2 6, aprovacoes_f2 4 — idêntico ao congelado antes da E1. REGRESSÃO OK: /pipeline-t01 com as 3 demandas e botões de retorno; /campanhas com 10 campanhas e "Conexão com a Meta ativa"; /funil nova. Histórico: F3-T13 v0.0.146 passou.
 - aprendizado: capturado:06_notas/aprendizado-continuo/AP-2026-11-03-1719-conferencia-visual-campo-calculado.md
-- ultima_acao: 2026-11-04 17:40 — análise da F3-T10/T11 ENTREGUE, nada implementado. Antes: 15:02 — F3-T13 CONCLUÍDA (v0.0.146), verificação refeita do zero, quatro defeitos reais corrigidos.
-- proxima_acao: aguardar autorização para implementar a T10 — análise entregue em 04/11 17:40; T11 só inicia após T10 aceita por teste humano
-- atualizado_em: 2026-11-04T17:40:00-03:00
+- ultima_acao: 2026-11-04 17:45 — F3-T10 ETAPA E1 implementada e entregue para teste (v0.0.147): tela /funil com colunas por estado, contagem por coluna, contadores de topo e faixa de conferência "soma das colunas = total da fonte". Nada implementado de E2–E5.
+- proxima_acao: aguardar homologação da E1 pelo owner; não iniciar a E2 sem a confirmação dele
+- atualizado_em: 2026-11-04T17:45:00-03:00
 
 ## Defaults conservadores da F3-T01 (protocolo anti-trava — Constituição §Dúvidas e insumos, 07/10/2026)
 
@@ -58,8 +58,29 @@ Histórico técnico de 28/10 e aceites anteriores preservados integralmente. Uma
 - **O código do app NÃO está no GitHub** (o repo `ramonpadua/tg-adapta-cliente` guarda só a documentação: 01_projeto…06_notas). O código vive no projeto Skip 51414, versionado por apply (v0.0.146). Preservação se verifica contra o app, não contra o repo.
 - **Reaproveitamento total — sem migration**: `demandas` já tem empresa, estado, tipo_origem, canal, campanha, oferta_servico, responsavel, proxima_acao, prazo, origem_dado, evidencia; `propostas` (2) e `vagas` (2) ligam por `demanda_id`; `pipeline_log` (2) tem estado_anterior, estado_novo, evidencia, quando, autor, demanda_id. Falta só a tela.
 - **Faixas de estados conferidas**: `suspect`, `prospect`, `lead_qualificado`, `oportunidade`, `proposta`, `vaga_aberta`, terminais `ganho`/`perdido`/`sem_timing`/`desqualificado`.
-- **Dado sintético para a prova**: 13 demandas, todas `origem_dado=sintetico`; 3 com `tipo_origem=desconhecido` (FIX-UNK-001, ATR-F2-UNK-001 e sem canal/campanha) — cobre o cenário de origem ausente da T11.
+- **Dado sintético para a prova**: 13 demandas, todas `origem_dado=sintetico`; **2** com `tipo_origem=desconhecido` (FIX-UNK-001 e ATR-F2-UNK-001) — conferido na fonte em 04/11; outros 6 sem `campanha` e 2 sem `canal`. Cobre o cenário de origem ausente da T11.
 - **Achado que exige decisão**: `demandas` não tem campo `tipo` inbound/outbound — usa `tipo_origem`; e `campanha` é texto livre, sem vínculo com `campanhas_meta`. A Jornada mostrará a campanha como texto, não como registro da F3-T12. Registrar como decisão, não inventar ligação.
-- **Baseline a preservar (04/11 17:40)**: demandas=13, propostas=2, vagas=2, pipeline_log=2, campanhas_meta=130, conexao_meta=114 (após limpeza do ensaio), experimentos_f2=3, decisoes_f2=6.
+- **Baseline a preservar (04/11 17:40)**: demandas=13, propostas=2, vagas=2, pipeline_log=2, campanhas_meta=130, conexao_meta=114, experimentos_f2=3, decisoes_f2=6, aprovacoes_f2=4.
 - **Etapas testáveis acordadas**: E1 colunas+contagens → E2 cartão completo → E3 filtros → E4 Jornada → E5 arrastar com transição. T11 (as provas) só depois da T10 homologada.
-- **Verificação de integridade documental** (pedido do owner): adotado procedimento de troca pontual com conferência de contagens antes/depois (tasks `- [x]`, seções `## `, linhas de tabela) e publicação por `push_files` quando o arquivo passa de ~16 KB, porque `create_or_update_file` trunca em silêncio nesse tamanho.
+- **Verificação de integridade documental** (pedido do owner): troca pontual com conferência de contagens antes/depois (tasks `- [x]`, seções `## `, linhas de tabela) e publicação por `push_files` quando o arquivo passa de ~16 KB, porque `create_or_update_file` trunca em silêncio nesse tamanho.
+
+## F3-T10 — execução em etapas (autorizada 04/11 17:41)
+
+**Condição 4 verificada antes de alterar o app — recuperação existe e é verificável:**
+- O app é versionado pelo Skip: cada apply gera uma versão (antes da E1: v0.0.146 / ref 3e8f321; depois: v0.0.147 / c73a040). A interface do Skip permite restaurar versão anterior, e a própria ferramenta `skip_project_apply_changes` recusa aplicar sobre uma versão restaurada sem `confirmPrune` — o que confirma que a restauração existe no fluxo.
+- A mudança da E1 é **aditiva**: 1 arquivo novo de serviço (`src/services/funil.ts`), 1 página nova (`src/pages/FunilF3Page.tsx`), 1 import + 1 `<Route path="/funil">` no `App.tsx` e 1 item de menu no `Layout.tsx`. Remover essas quatro linhas desativa a tela e devolve o app ao estado anterior, sem tocar em nenhum dado.
+- **Nenhuma migration foi criada nesta task** — logo o rollback de banco (`skip_cloud_rollback_migration`, que é destrutivo) não é necessário nem será usado.
+- Risco declarado: nenhum dado é alterado pela E1 (somente leitura); o risco máximo é a tela nova não renderizar, e nesse caso a recuperação é remover a rota ou restaurar a v0.0.146.
+
+**Etapas:** E1 colunas e contagens (FEITA, aguardando homologação) → E2 cartão completo → E3 filtros → E4 Jornada → E5 arrastar com transição.
+
+**Limite conhecido, declarado antes de começar:** o campo `campanha` da demanda é texto livre e não tem vínculo com a coleção `campanhas_meta` da F3-T12. O cartão mostrará o nome como está gravado; não será criada ligação nova (fora da SPEC).
+
+**E1 — o que foi entregue (v0.0.147, ref c73a040):**
+- Rota nova `/funil` + item "Funil" no menu lateral (aditivos).
+- 6 colunas de estados ativos (Suspect, Prospect, Lead qualificado, Oportunidade, Proposta, Vaga aberta) + coluna "Encerrados" agrupando os 4 terminais.
+- Contagem por coluna calculada da MESMA lista que gera os cartões — por construção, contagem e cartão não podem divergir.
+- Contadores de topo: Demandas, Sem origem, Sem canal, Prazo vencido, De teste.
+- Faixa de conferência que verifica em tempo real se a soma das colunas é igual ao total de registros da fonte ("Contagem confere com a fonte").
+- Selo TESTE em todo cartão com `origem_dado=sintetico`; prazo mais próximo no topo da coluna; prazo vencido em vermelho.
+- Somente leitura: nenhuma escrita, nenhuma coleção nova, nenhuma migration, nenhum hook.
