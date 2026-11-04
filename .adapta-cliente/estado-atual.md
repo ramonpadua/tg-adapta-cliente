@@ -1,21 +1,21 @@
 # Estado atual — Adapta Cliente
 
-- task_id: nenhuma
+- task_id: F3-T10
 - champion: João Paulo
-- spec: 04-fase-atual/specs/spec-f3-006-campanhas-meta-maestro.md (concluída)
+- spec: 04-fase-atual/specs/spec-f3-005-funil-kanban.md
 - fase: 3
-- task_elegivel: F3-T02 (próxima; bloqueada por B3-RACI-01 — exige matriz RACI nominal)
+- task_elegivel: F3-T10 (selecionada; F3-T11 vem depois dela, bloqueada até a T10 ser aceita)
 - tasks_fase_3: 4/13 concluídas (F3-T09, F3-T12, F3-T01, F3-T13)
 - prazo_referencia: ajustável pelo Champion (referência inicial 30/09/2026 vencida; sem trava de prazo)
 - ambiente: Skip (GoSkip + SkipCloud) — projeto 51414 "Repositório Adapta"
-- etapa: sem_task
-- autorizacao_implementacao: confirmada — 2026-10-28 10:58, Champion/owner respondeu "SIm" à pergunta "Posso implementar este plano na F3-T12?" (relatório de análise entregue antes, em 28/10 10:05); 2026-10-28 21:31, "vou com sua recomendação" autorizou a conta de serviço dedicada do agendador (caminho A); 2026-10-30, owner escolheu "Caminho C" (comparação primeiro) e depois autorizou a troca de fonte para Graph API direta + reafirmou o aceite ("Sim — mesmo principal, mesmo somente-leitura"); 2026-11-04 14:30, owner autorizou refazer os testes da F3-T13 com o token oficial ("agora refaça os testes da tarefa usando esse token oficial")
-- teste_humano: APROVADO — F3-T12: 2026-10-28 o Champion executou a prova no navegador (PDF 26/26); 2026-10-30 o OWNER atestou o CA-3-16 no Gerenciador; 2026-11-03 17:19 o OWNER conferiu a tela `/campanhas` contra a Graph API campo a campo (bateu). F3-T13: 2026-11-04 o OWNER rodou os cinco cenários em `/campanhas/prova-conexao` (print: zero linhas gravadas nos cinco, saúde seguiu "ok"), conferiu os textos corrigidos e **homologou em 04/11 14:53: "Aprovado — pode concluir a T13"**
-- verificacao_automatica: passou — Skip v0.0.146 (F3-T13, verificação independente refeita do zero em 04/11). PROVA DE FALHA REAL: credencial inválida deliberada no caminho real → Meta recusou, saúde gravada `expirada`, **e-mail enviado e confirmado no log do sistema** (17:57:03 UTC, assunto "Campanhas Meta: Conexao Meta expirada"), faixa de aviso na tela (captura 14:57 BRT), 130 linhas preservadas. Reexecução com credencial boa: 0 criadas / 70 atualizadas / 0 duplicados / 0 escrita na Meta / destino único. Conversão de hora: `formatarInstanteBR` com 4 casos testados, todos passaram. Bateria anterior (v0.0.142): leitura real 10 campanhas/70 linhas/0 erros; 5 ensaios com 0 linhas e saúde inalterada (107→107). Conferência contra a fonte em 03/11: gravado R$ 15,68 / 3.068 impressões / 162 cliques / 105 resultados = Graph API idêntica. Regressão: F3-T01 intacta (propostas 2, vagas 2, pipeline_log 2), demandas 13 todas `origem_dado=sintetico`. Histórico anterior (F3-T12): v0.0.120, ref 5d5c261, três defeitos reais corrigidos (normalizarStatus, porta de entrada, campo `resultados`).
-- aprendizado: capturado:06_notas/aprendizado-continuo/AP-2026-11-03-1719-conferencia-visual-campo-calculado.md
-- ultima_acao: 2026-11-04 15:02 — **F3-T13 CONCLUÍDA** (v0.0.146). Verificação independente refeita do zero: prova de falha REAL com credencial inválida (e-mail confirmado no log, faixa na tela, retrato intacto, zero escrita na Meta), idempotência, destino único e regressão F1/F2/T01. Três defeitos reais corrigidos neste ciclo: ensaio sujava o estado (v0.0.140), hora crua em UTC na faixa (v0.0.146) e token expirado volta HTTP 400/190 e não 401 (v0.0.145). Antes: 2026-11-03 17:19 — F3-T12 CONCLUÍDA
-- proxima_acao: destravar a F3-T02 nomeando a matriz RACI nominal (B3-RACI-01) ou autorizar F3-T10/T11; F3-T13 encerrada em 04/11
-- atualizado_em: 2026-11-04T15:02:00-03:00
+- etapa: aguardando_autorizacao
+- autorizacao_implementacao: ausente para a T10. Autorizações anteriores: 2026-10-28 10:58 (F3-T12, "SIm"); 2026-10-28 21:31 (conta de serviço do agendador, "vou com sua recomendação"); 2026-10-30 (fonte Graph API direta); 2026-11-04 14:30 (refazer testes da F3-T13 com o token oficial); 2026-11-04 17:35 ("Autorizo retomar exclusivamente a F3-T10/T11, referente à tela Funil" — autoriza a ANÁLISE e a implementação em etapas, mas a skill exige o relatório antes do primeiro código)
+- teste_humano: APROVADO até a F3-T13 (homologada em 04/11 14:53). PENDENTE para T10/T11 — owner definiu: "Não conclua T10/T11 sem os testes previstos e minha homologação".
+- verificacao_automatica: pendente para a T10 (nada implementado ainda). Baseline preservado a conferir a cada etapa: demandas=13, propostas=2, vagas=2, pipeline_log=2, campanhas_meta=130, conexao_meta=114, experimentos_f2=3, decisoes_f2=6.
+- aprendizado: capturado:06_notas/aprendizado-continuo/AP-2026-11-04-1453-prova-de-falha-real.md
+- ultima_acao: 2026-11-04 17:40 — análise da F3-T10/T11 ENTREGUE, nada implementado. SPEC-F3-005 lida integralmente; estado real do app conferido (sem página Funil; sem migration necessária).
+- proxima_acao: aguardar autorização para implementar a T10 — análise entregue em 04/11 17:40; T11 só inicia após T10 aceita por teste humano
+- atualizado_em: 2026-11-04T17:40:00-03:00
 
 ## Defaults conservadores da F3-T01 (protocolo anti-trava — Constituição §Dúvidas e insumos, 07/10/2026)
 
@@ -50,3 +50,16 @@ Histórico técnico de 28/10 e aceites anteriores preservados integralmente. Uma
 - **DEFEITO REAL 4 — textos prometiam o que não acontecia (v0.0.143)**: os cenários diziam "faixa de aviso e e-mail" e "erro registrado" depois que o ensaio deixou de fazer isso. Alinhados ao comportamento real.
 - **Verificação independente (refeita do zero)**: prova de falha real com credencial inválida → Meta recusou, saúde `expirada`, e-mail enviado (confirmado no log do sistema às 17:57:03 UTC), faixa de aviso na tela, 130 linhas preservadas; reexecução com credencial boa: 0 criadas / 70 atualizadas / 0 duplicados / 0 escrita na Meta / destino único; regressão F1/F2/T01 intacta.
 - **Homologação**: "Aprovado — pode concluir a T13" (04/11/2026 14:53).
+
+## Análise da F3-T10/T11 (04/11/2026) — entregue, não implementada
+
+- **Autorização do owner (04/11 17:35)**: "Autorizo retomar exclusivamente a F3-T10/T11, referente à tela Funil"; "avançar sem aguardar a matriz B3-RACI-01, desde que ela não seja uma dependência obrigatória da T10/T11"; "Execute em etapas testáveis"; "Não conclua T10/T11 sem os testes previstos e minha homologação".
+- **B3-RACI-01 NÃO bloqueia a T10/T11** — conferido na SPEC-F3-005: a matriz é exigida na F3-T02 (prova de equivalência) e na F3-T05/T06 (handoff). A T10/T11 não depende dela.
+- **O código do app NÃO está no GitHub** (o repo `ramonpadua/tg-adapta-cliente` guarda só a documentação: 01_projeto…06_notas). O código vive no projeto Skip 51414, versionado por apply (v0.0.146). Preservação se verifica contra o app, não contra o repo.
+- **Reaproveitamento total — sem migration**: `demandas` já tem empresa, estado, tipo_origem, canal, campanha, oferta_servico, responsavel, proxima_acao, prazo, origem_dado, evidencia; `propostas` (2) e `vagas` (2) ligam por `demanda_id`; `pipeline_log` (2) tem estado_anterior, estado_novo, evidencia, quando, autor, demanda_id. Falta só a tela.
+- **Faixas de estados conferidas**: `suspect`, `prospect`, `lead_qualificado`, `oportunidade`, `proposta`, `vaga_aberta`, terminais `ganho`/`perdido`/`sem_timing`/`desqualificado`.
+- **Dado sintético para a prova**: 13 demandas, todas `origem_dado=sintetico`; 3 com `tipo_origem=desconhecido` (FIX-UNK-001, ATR-F2-UNK-001 e sem canal/campanha) — cobre o cenário de origem ausente da T11.
+- **Achado que exige decisão**: `demandas` não tem campo `tipo` inbound/outbound — usa `tipo_origem`; e `campanha` é texto livre, sem vínculo com `campanhas_meta`. A Jornada mostrará a campanha como texto, não como registro da F3-T12. Registrar como decisão, não inventar ligação.
+- **Baseline a preservar (04/11 17:40)**: demandas=13, propostas=2, vagas=2, pipeline_log=2, campanhas_meta=130, conexao_meta=114 (após limpeza do ensaio), experimentos_f2=3, decisoes_f2=6.
+- **Etapas testáveis acordadas**: E1 colunas+contagens → E2 cartão completo → E3 filtros → E4 Jornada → E5 arrastar com transição. T11 (as provas) só depois da T10 homologada.
+- **Verificação de integridade documental** (pedido do owner): adotado procedimento de troca pontual com conferência de contagens antes/depois (tasks `- [x]`, seções `## `, linhas de tabela) e publicação por `push_files` quando o arquivo passa de ~16 KB, porque `create_or_update_file` trunca em silêncio nesse tamanho.
