@@ -9,13 +9,13 @@
 - prazo_referencia: ajustável pelo Champion (referência inicial 30/09/2026 vencida; sem trava de prazo)
 - ambiente: Skip (GoSkip + SkipCloud) — projeto 51414 "Repositório Adapta"
 - etapa: aguardando_teste_humano
-- autorizacao_implementacao: SEGURANÇA autorizada em 11/11 12:51 (caminho B), 6 etapas, uma rota/tela por vez com homologação. ETAPA 1 HOMOLOGADA (16:21). ETAPA 2 HOMOLOGADA (17:24). ETAPA 3: /funil HOMOLOGADA (19:04); /pipeline-t01 entregue (19:12). Inicial mantém autenticação própria por ordem do owner. F3-T11 suspensa. Autorizações anteriores preservadas: 2026-10-28 10:58 (F3-T12); 2026-10-28 21:31 (agendador); 2026-10-30 (Graph API direta); 2026-11-04 14:30 (testes F3-T13); 2026-11-04 17:35 (retomar T10/T11).
-- teste_humano: F3-T10 APROVADA. SEGURANÇA ETAPA 1 HOMOLOGADA (16:21); ETAPA 2 HOMOLOGADA (17:24); ETAPA 3 rota /funil HOMOLOGADA (19:04, owner confirmou os 13 cartões após Entrar); rota /pipeline-t01 ENTREGUE (19:12), aguardando homologação.
-- verificacao_automatica: SEGURANÇA etapas 1 e 2 HOMOLOGADAS. Etapa 3 em duas rotas: /funil (v0.0.168) e /pipeline-t01 (v0.0.169), QA OK em ambas. Testes da /pipeline-t01: sem login root 20.588 B com porta de entrada e sem PIPE-F3-IN-001; após Entrar root 42.990 B com PIPE-F3-IN-001 e "Pipeline (T01)". Funil 13 de 13 (root 100.046 B); Inicial root 61.481 B com painel. Proteções: escrita anônima em demandas 404, criar conta 403. BASELINE intacto: demandas 13, propostas 2, vagas 2, pipeline_log 9, campanhas_meta 200, experimentos_f2 3, decisoes_f2 6, aprovacoes_f2 4.
+- autorizacao_implementacao: SEGURANÇA autorizada em 11/11 12:51 (caminho B), 6 etapas. ETAPA 1 HOMOLOGADA (16:21). ETAPA 2 HOMOLOGADA (17:24). ETAPA 3 COMPLETA na v0.0.170 (19:36), aguardando homologação. ETAPA 4 autorizada a começar só após homologação da 3 — será UMA conta administrativa real com papel `champion`, para o owner. F3-T11 suspensa. Autorizações anteriores preservadas: 2026-10-28 10:58; 2026-10-28 21:31; 2026-10-30; 2026-11-04 14:30; 2026-11-04 17:35.
+- teste_humano: F3-T10 APROVADA. SEGURANÇA ETAPA 1 HOMOLOGADA (16:21); ETAPA 2 HOMOLOGADA (17:24); ETAPA 3 — Funil e Pipeline homologadas pelo owner; /decisoes-f2 e /atribuicao-t04 entregues em 19:36, aguardando homologação final da etapa.
+- verificacao_automatica: SEGURANÇA etapas 1 e 2 HOMOLOGADAS. Etapa 3 COMPLETA na v0.0.170 (ref 2beab22), QA OK. Verificação das 7 rotas com dado: TODAS pedem autenticação sem login e abrem com login. Testes de 11/11: /decisoes-f2 sem login root 20.582 B com porta de entrada e sem "Fila de ações"; com login root 55.227 B. /atribuicao-t04 sem login root 20.596 B; com login root 41.873 B. Funil 13 de 13 (root 100.046 B); Pipeline com PIPE-F3-IN-001 (root 42.990 B). BASELINE intacto: demandas 13, propostas 2, vagas 2, pipeline_log 9, campanhas_meta 200, experimentos_f2 3, decisoes_f2 6, aprovacoes_f2 4, contas 1. Proteções: escrita anônima em demandas 404, criar conta 403.
 - aprendizado: capturado:06_notas/aprendizado-continuo/AP-2026-11-03-1719-conferencia-visual-campo-calculado.md
-- ultima_acao: 2026-11-11 19:12 — SEGURANÇA ETAPA 3 (2ª rota) na v0.0.169: `ProtecaoDeRota` também embrulha /pipeline-t01, por FORA. Testes: sem login pede acesso e não mostra dados; com login mostra PIPE-F3-IN-001; Funil 13 de 13; Inicial com painel; proteções ativas; dados intactos. PENDÊNCIA CRÍTICA registrada antes: credenciais expostas no código público (6 telas) — bloqueia uso real até a Etapa 4.
-- proxima_acao: aguardar homologação da ETAPA 3 na rota /pipeline-t01 (v0.0.169). Aprovada, embrulhar a próxima rota. A Inicial mantém autenticação própria.
-- atualizado_em: 2026-11-11T19:12:00-03:00
+- ultima_acao: 2026-11-11 19:36 — SEGURANÇA ETAPA 3 COMPLETA na v0.0.170: `ProtecaoDeRota` também embrulha /decisoes-f2 e /atribuicao-t04, por FORA. Testes: ambas pedem acesso sem login e abrem completas com login; Funil 13 de 13; Pipeline com PIPE-F3-IN-001; dados e proteções intactos. Backup em work/seguranca/backup-v0169/.
+- proxima_acao: aguardar homologação da ETAPA 3 completa (v0.0.170). Aprovada, seguir para a ETAPA 4: uma conta administrativa real com papel champion, com nome e e-mail indicados pelo owner.
+- atualizado_em: 2026-11-11T19:36:00-03:00
 
 ## Defaults conservadores da F3-T01 (protocolo anti-trava — Constituição §Dúvidas e insumos, 07/10/2026)
 
@@ -33,7 +33,7 @@ NENHUMA — D1–D6 resolvidas pela emenda E-F3-001-04 (26/10/2026), conferida 1
 ## Ciclo da F3-T13 — concluída em 04/11/2026 (v0.0.146)
 
 - **Credencial:** token do segredo `META_ACCESS_TOKEN` e `credentials/meta_token.json` são o MESMO (sha256 `7080ebf8c792`), principal João Paulo Oliveira.
-- **Quatro defeitos reais corrigidos:** ensaio sujava o estado (v0.0.140); hora crua em UTC (v0.0.146); token expirado volta 400/190 e não 401 (v0.0.145); textos prometiam o que não acontecia (v0.0.143).
+- **Quatro defeitos reais corrigidos:** ensaio sujava o estado; hora crua em UTC; token expirado volta 400/190 e não 401; textos prometiam o que não acontecia.
 - **Homologação**: "Aprovado — pode concluir a T13" (04/11 14:53).
 
 ## F3-T10 — CONCLUÍDA (11/11/2026)
@@ -50,16 +50,16 @@ NENHUMA — D1–D6 resolvidas pela emenda E-F3-001-04 (26/10/2026), conferida 1
 
 ## Análise da F3-T10/T11
 
-- **O código do app NÃO está no GitHub** — vive no projeto Skip 51414 (hoje v0.0.169).
+- **O código do app NÃO está no GitHub** — vive no projeto Skip 51414 (hoje v0.0.170).
 - **O endereço de PREVIEW é o que funciona**: `repositorio-adapta-cc556--preview.goskip.app`. O de produção nunca foi publicado.
 - **B3-RACI-01 NÃO bloqueia a T10/T11** — a matriz é exigida na F3-T02 e na F3-T05/T06.
 - **Decisão registrada**: `campanha` é texto livre, sem vínculo com `campanhas_meta`.
 
 ## SEGURANÇA — correção em 6 etapas (autorizada 11/11/2026 12:51)
 
-**Ordem:** (1) bloquear escrita anônima em demandas preservando leitura ✅ → (2) bloquear cadastro público e autoatribuição de papel ✅ → (3) login por rota → (4) conta administrativa real → (5) fechar leitura pública → (6) bloquear exclusão pública em `decisoes_f2`.
+**Ordem:** (1) bloquear escrita anônima em demandas preservando leitura ✅ → (2) bloquear cadastro público e autoatribuição de papel ✅ → (3) login por rota ✅ → (4) conta administrativa real → (5) fechar leitura pública → (6) bloquear exclusão pública em `decisoes_f2`.
 
-**Backups:** `work/seguranca/backup-regras-ANTES.json`, `backup-regras-ETAPA2.json`, `backup-v0167/`.
+**Backups:** `work/seguranca/backup-regras-ANTES.json`, `backup-regras-ETAPA2.json`, `backup-v0167/`, `backup-v0169/`.
 
 ### Etapa 1 — APLICADA (v0.0.159) e HOMOLOGADA (16:21)
 
@@ -69,19 +69,24 @@ NENHUMA — D1–D6 resolvidas pela emenda E-F3-001-04 (26/10/2026), conferida 1
 
 `users`: createRule → `null` (ninguém cria conta pela API); updateRule → `id = @request.auth.id && @request.body.role:isset = false`; list/view/delete preservados.
 
-### Etapa 3 — EM ANDAMENTO (uma rota por vez)
+### Etapa 3 — COMPLETA (v0.0.170), aguardando homologação
 
-**Método:** o controle fica **fora** da página, embrulhando a rota no `App.tsx`. Nenhuma linha de `FunilF3Page.tsx`, `Index.tsx` ou `PipelineF3T01Page.tsx` foi alterada.
+**Método:** controle **fora** da página, embrulhando a rota no `App.tsx`. Nenhuma linha dos componentes internos foi alterada.
 
-| Rota | Versão | Estado |
-|---|---|---|
-| `/funil` | v0.0.168 | **HOMOLOGADA** pelo owner em 19:04 |
-| `/pipeline-t01` | v0.0.169 | ENTREGUE, aguardando homologação |
-| `/` (Inicial) | — | mantém autenticação própria (`useAcessoRequerido`) |
+| Rota | Mecanismo | Sem login | Com login |
+|---|---|---|---|
+| `/` Inicial | próprio (`useAcessoRequerido`) | pede acesso | painel |
+| `/funil` | `ProtecaoDeRota` | pede acesso | 13 cartões |
+| `/pipeline-t01` | `ProtecaoDeRota` | pede acesso | 3 demandas |
+| `/campanhas` | próprio (desde 28/10) | pede acesso | 10 campanhas |
+| `/campanhas/prova-conexao` | próprio | pede acesso | prova |
+| `/experimentos` | próprio | pede acesso | lista |
+| `/decisoes-f2` | `ProtecaoDeRota` (novo) | pede acesso | fila |
+| `/atribuicao-t04` | `ProtecaoDeRota` (novo) | pede acesso | tela |
 
-Componente novo: `src/components/seg/ProtecaoDeRota.tsx`. Único arquivo existente alterado: `src/App.tsx`.
+**7 rotas com dado, todas protegidas.** Único arquivo existente alterado: `src/App.tsx`. Componente novo: `src/components/seg/ProtecaoDeRota.tsx`.
 
-**Testes da /pipeline-t01:** sem login → porta de entrada, sem `PIPE-F3-IN-001` (root 20.588 B); após Entrar → `PIPE-F3-IN-001` e "Pipeline (T01)" (root 42.990 B). Funil 13 de 13; Inicial com painel; proteções ativas; baseline intacto.
+**Dívida técnica registrada (não é falha de segurança):** as telas não usam um mecanismo único — algumas têm porta de entrada própria, outras usam o invólucro. Hoje todas cumprem a regra.
 
 ## Incidente do Funil em branco (v0.0.161 a v0.0.166)
 
@@ -100,7 +105,7 @@ Gatilho: Etapa 4. A Etapa 5 não faz sentido antes disso. Documento: `06_notas/P
 ## Pendências registradas
 
 - **(a) Auditoria:** o histórico grava o `responsavel` da demanda, não quem executou.
-- **(b) Contas reais:** criar para Comercial, Operação e Diretoria (etapa 4), com nomes indicados pelo owner.
+- **(b) Conta real:** UMA conta administrativa com papel `champion`, para o owner (etapa 4), com nome e e-mail indicados por ele.
 - **(c) Rotas de backend:** varrer todas antes da etapa 5.
 - **(d) Funil sem limite de espera:** se o Skip travar, a tela fica em "Carregando".
 - **(e) Credenciais no código:** ver PENDÊNCIA CRÍTICA acima.
