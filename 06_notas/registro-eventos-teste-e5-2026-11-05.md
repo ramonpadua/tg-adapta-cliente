@@ -92,3 +92,42 @@ Quem auditar o histórico e encontrar estes dois eventos deve saber, **antes de 
 - Contagens conferidas na fonte antes e depois: demandas 13, propostas 2, vagas 2, `pipeline_log` 2 → 4.
 - Contaminação de indicador: verificada no código (`Index.tsx` lê só `demandas`, filtra `producao`) e no dado (0 registros de produção).
 - Regra append-only: verificada por tentativa real de exclusão (403).
+
+---
+
+# ATUALIZAÇÃO de 11/11/2026 — o histórico tem 9 eventos
+
+> Acrescentado ao registro original, que permanece integral. O motivo da atualização: mais eventos de teste foram gerados durante a homologação da E5 e durante a análise de segurança.
+
+## Situação atual: 9 eventos
+
+| # | Quando (UTC) | Registro | De → para | Origem |
+|---|---|---|---|---|
+| 1 | 2026-11-04 13:38:22 | `VAGA-IN-001` | Em andamento → Perfis apresentados | **Legítimo** (T01) |
+| 2 | 2026-11-04 14:03:25 | `VAGA-OUT-001` | Em andamento → Perfis apresentados | **Legítimo** (T01) |
+| 3 | 2026-11-05 13:45:59 | `PIPE-F3-STUCK-001` | oportunidade → proposta | Teste técnico (E5) |
+| 4 | 2026-11-05 13:46:14 | `PIPE-F3-STUCK-001` | proposta → oportunidade | Teste técnico (E5) |
+| 5 | 2026-11-11 14:58:35 | `PIPE-F3-IN-001` | oportunidade → proposta | Teste técnico (guia E5) |
+| 6 | 2026-11-11 14:58:41 | `PIPE-F3-IN-001` | proposta → oportunidade | Teste técnico (guia E5) |
+| 7 | 2026-11-11 15:11:30 | `PIPE-F3-IN-001` | oportunidade → proposta | **LEGÍTIMO — homologação do owner (E5)** |
+| 8 | 2026-11-11 15:37:07 | `PIPE-F3-STUCK-001` | oportunidade → proposta | Teste técnico (análise de segurança) |
+| 9 | 2026-11-11 15:37:15 | `PIPE-F3-STUCK-001` | proposta → oportunidade | Teste técnico (análise de segurança) |
+
+**Sete são testes técnicos. Dois são legítimos.** O evento #7 é o arrasto homologado pelo owner em 11/11, e **permanece** — a demanda `PIPE-F3-IN-001` está em `proposta` com a evidência `"teste"` que ele digitou.
+
+## Os eventos #8 e #9 — o que aconteceu e por quê
+
+Ao iniciar a análise de segurança pedida pelo owner (11/11 12:40), o Maestro verificou se o servidor impede alteração **sem sessão iniciada**. Para isso enviou uma mudança de etapa sem autenticação em `PIPE-F3-STUCK-001` (`oportunidade → proposta`) e a desfez em seguida (`proposta → oportunidade`).
+
+**Resultado: o servidor ACEITOU a escrita sem login.** É esse o achado que motivou a análise de segurança em curso. A mudança foi revertida imediatamente e a `evidencia` de teste apagada; o histórico, por ser append-only, registrou as duas transições — como deve ser.
+
+**O que isso prova:** o histórico **não mente**. Registrou fielmente o que aconteceu, inclusive uma ação que não devia ser possível. É o comportamento correto de um registro de auditoria — e é a razão pela qual ele não deve ser apagável.
+
+## Estado das demandas tocadas
+
+- **`PIPE-F3-STUCK-001`** (id `l4ctzbl1qa1l40w`): eventos #3, #4, #8, #9. Estado final **`oportunidade`** — igual ao original. `evidencia` **vazia** — restaurada.
+- **`PIPE-F3-IN-001`** (Serviços Delta): eventos #5, #6 (teste) e **#7 (legítimo)**. Estado final **`proposta`** — o estado homologado pelo owner. `evidencia` `"teste"` — o texto digitado por ele.
+
+## O que isso muda na leitura do registro original
+
+Nada do que está nas seções 1 a 8 deixa de valer. O que muda é o número: **de 4 eventos para 9**. E a leitura correta passa a ser: *sete eventos de teste técnico e dois legítimos, sendo um deles a homologação do owner*.
