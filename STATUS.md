@@ -1,13 +1,13 @@
 # STATUS — Projeto TG Mais Serviços de Tecnologia e RH LTDA
 
-> **Atualizado em:** 2026-11-04 · **Por:** Maestro (F3-T13 concluída após teste humano do owner)  
+> **Atualizado em:** 2026-11-11 · **Por:** Maestro (F3-T10 concluída após homologação da etapa E5)  
 > Painel do projeto: fase atual, progresso, travas e próxima ação.
 
 ## Onde estamos
 
 - **Fase atual:** 3 — Funil, painéis e passagem entre áreas (5 fases no total).
 - **Fase 1:** 6/6 ✅ · **Fase 2:** 9/9 ✅ (arquivada em `05_entregas/fase-2/`).
-- **Fase 3:** 4/13 tasks concluídas — **F3-T09** (24/10, com ressalvas preservadas: Hub 57113 ativo até substituta aprovada; leads do 67634 ainda sem ponte para o funil), **F3-T12 CONCLUÍDA em 03/11/2026** (tela Campanhas lendo a Meta por Graph API direta; leitura real comprovada: 10 campanhas, 70 linhas; CA-3-16 atestado pelo owner), **F3-T01 CONCLUÍDA em 04/11/2026** (propostas e vagas ligadas à demanda, histórico append-only, retorno da operação com "Substituição encerrada" exigindo motivo, recuperação 3 tentativas/90 dias) e **F3-T13 CONCLUÍDA em 04/11/2026**: provas do CA-3-17 com falha real (credencial inválida no caminho real) — a Meta recusou, o sistema gravou saúde 'expirada', enviou o e-mail (confirmado no log do sistema), mostrou a faixa de aviso na tela e preservou as 130 linhas do retrato anterior; reexecução não duplicou (0 criadas, 70 atualizadas) e a auditoria confirmou zero escrita na Meta. Três defeitos reais corrigidos: o ensaio sujava o estado real, a tela mostrava hora crua em UTC e token expirado volta HTTP 400/190 (não 401). Homologada pelo owner. **F3-T02 é a próxima**, bloqueada por B3-RACI-01.
+- **Fase 3:** 5/13 tasks concluídas — **F3-T09** (24/10, com ressalvas preservadas: Hub 57113 ativo até substituta aprovada; leads do 67634 ainda sem ponte para o funil), **F3-T12 CONCLUÍDA em 03/11/2026** (tela Campanhas lendo a Meta por Graph API direta; CA-3-16 atestado pelo owner), **F3-T01 CONCLUÍDA em 04/11/2026** (propostas e vagas ligadas à demanda, histórico append-only, retorno da operação e recuperação 3/90), **F3-T13 CONCLUÍDA em 04/11/2026** (provas de falha com credencial inválida real: e-mail confirmado no log, faixa de aviso na tela, retrato anterior intacto, zero escrita na Meta) e **F3-T10 CONCLUÍDA em 11/11/2026**: tela Funil entregue em 5 etapas, cada uma homologada pelo owner — colunas e contagens, cartão completo, filtros, Jornada e arrastar com evidência. A prova final foi dele: moveu "Serviços Delta" de Oportunidade para Proposta e o sistema registrou a transição no histórico. Quatro defeitos reais corrigidos no caminho.
 - **Champion:** João Paulo.
 - **Prazo:** sem trava de prazo (decisão de 07/10/2026).
 
@@ -24,7 +24,7 @@
 
 ## Ordem das próximas tasks
 
-F3-T01 ✅ → F3-T13 ✅ → F3-T10/T11 Funil → **F3-T02** (próxima, bloqueada por B3-RACI-01) → demais. Concluídas: F3-T09, F3-T12, F3-T01 e F3-T13.
+F3-T01 ✅ → F3-T13 ✅ → **F3-T11** (próxima, as provas do Funil) → T03/T05 → demais. Concluídas: F3-T09, F3-T12, F3-T01, F3-T13 e F3-T10.
 
 ## Travas que dependem de decisão
 
@@ -35,10 +35,11 @@ F3-T01 ✅ → F3-T13 ✅ → F3-T10/T11 Funil → **F3-T02** (próxima, bloquea
 
 ## Próxima ação
 
-1. Cliente: F3-T13 concluída em 04/11. Destravar a **F3-T02** nomeando a matriz RACI nominal (B3-RACI-01) ou autorizar T10/T11.
+1. Cliente: F3-T10 concluída em 11/11. Autorizar a **F3-T11** (provas do Funil) ou outra task liberada; a T11 é a próxima na ordem.
 2. F3-T12 CONCLUÍDA em 03/11. A automação diária segue rodando (cron a cada 2h) para manter o retrato atualizado.
 3. F3-T01 CONCLUÍDA em 04/11: migrações 0026-0029, ganchos de hierarquia/recuperação/append-only e tela `/pipeline-t01`. Evidência em `06_notas/changelog-2026-11-04-f3-t01-concluida.md`.
 4. F3-T13 CONCLUÍDA em 04/11: v0.0.146, provas de falha real, idempotência, destino único e zero escrita na Meta. Evidência em `06_notas/changelog-2026-11-04-f3-t13-concluida.md`.
-5. E4 (ingestão de leads): plano de 29/10 sem emenda/task liberada. Não implementar ingestão nem usar dado pessoal real; política LGPD continua obrigatória. Multi-tenant e autonomia de tráfego não fazem parte desta consolidação.
+5. F3-T10 CONCLUÍDA em 11/11: tela `/funil` com 5 etapas homologadas, versão v0.0.158. Evidência em `06_notas/changelog-2026-11-11-f3-t10-concluida.md`.
+6. E4 (ingestão de leads): plano de 29/10 sem emenda/task liberada. Não implementar ingestão nem usar dado pessoal real; política LGPD continua obrigatória.
 
 **Prazo de referência da cobrança documental:** 31/10/2026; consolidação publicada em 29/10. Não é promessa de conclusão de Funil ou E4 nessa data.
