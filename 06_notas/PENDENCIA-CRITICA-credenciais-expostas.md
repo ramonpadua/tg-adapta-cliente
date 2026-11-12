@@ -1,118 +1,124 @@
-# PENDÊNCIA CRÍTICA BLOQUEANTE — credenciais expostas no código público
+# PENDÊNCIA CRÍTICA — credenciais expostas no código público
 
-> **Status: RESOLVIDA EM 12/11/2026 (v0.0.179) — zero ocorrências no arquivo público**
-> Registrada em 11/11/2026 19:06 por decisão do owner.
-> **Falta apenas:** revogar/desativar a conta de teste, o que depende da confirmação de acesso dos dois administradores.
+> **Status: ✅ RESOLVIDA EM 12/11/2026 — v0.0.181**
+> Registrada em 11/11/2026 19:06 por decisão do owner. Fechada em 12/11/2026 após as duas contas reais entrarem.
 
-## Regra de bloqueio
+---
 
-**O sistema NÃO pode ser liberado para uso real enquanto a pendência estiver aberta.**
+## Resolução em uma linha
 
-Liberar para uso real inclui, sem exceção:
-- publicar em produção;
-- conectar dados reais de clientes, candidatos ou campanhas;
-- criar contas para pessoas da empresa que não sejam de teste;
-- sair do ambiente de homologação.
+As 6 cópias da senha saíram do código; as telas passaram a pedir e-mail e senha de cada pessoa; a conta de teste foi desativada em três camadas; e a verificação no arquivo público dá **zero** ocorrências.
 
-**Até a resolução: somente dados fictícios.**
+---
 
-## O que estava exposto
+## 1. O que estava exposto
 
-A senha do usuário de teste `humano-sintetico-aprovador-01@f2.invalid` — senha `F2-Sintetico-2026!` — estava escrita em texto aberto no código do aplicativo, que é **público por definição**: qualquer navegador que abra o sistema baixa o arquivo inteiro.
+A senha de `humano-sintetico-aprovador-01@f2.invalid` (`F2-Sintetico-2026!`) estava em texto aberto em 6 arquivos do frontend. O navegador baixa o código inteiro — logo, a senha era pública. A credencial tinha papel `champion`.
 
-**Ocorrências verificadas:** 6 cópias da mesma credencial, em 6 telas.
+| # | Arquivo original |
+|---|---|
+| 1 | `src/pages/CampanhasF3Page.tsx` |
+| 2 | `src/pages/PipelineF3T01Page.tsx` |
+| 3 | `src/pages/ProvaF3T13Page.tsx` |
+| 4 | `src/pages/ExperimentosF2.tsx` |
+| 5 | `src/components/seg/AcessoRequerido.tsx` |
+| 6 | `src/components/seg/ProtecaoDeRota.tsx` |
 
-| # | Arquivo | Tela |
-|---|---|---|
-| 1 | `src/pages/CampanhasF3Page.tsx` | Campanhas (desde 28/10) |
-| 2 | `src/pages/PipelineF3T01Page.tsx` | Pipeline (T01) |
-| 3 | `src/pages/ProvaF3T13Page.tsx` | Prova da conexão Meta |
-| 4 | `src/pages/ExperimentosF2.tsx` | Experimentos (Fase 2) |
-| 5 | `src/components/seg/AcessoRequerido.tsx` | Visão geral (Inicial) |
-| 6 | `src/components/seg/ProtecaoDeRota.tsx` | Funil |
+Laudo técnico: `artifacts/LAUDO-credenciais-expostas-2026-11-11.md`
 
-**Poder da credencial:** papel `champion` — o mais alto disponível. Permite ler tudo, aprovar e bloquear na Fase 2, criar e alterar decisões.
+---
 
-**Limites que as Etapas 1 e 2 já impõem:** não cria conta, não muda papel, não apaga demanda.
+## 2. O que foi feito
 
-**Laudo completo:** `artifacts/LAUDO-credenciais-expostas-2026-11-11.md`
+### As três obrigações da pendência
 
-## O que tem de ser feito antes de liberar
+| Obrigação | Situação |
+|---|---|
+| Remover as senhas do código | ✅ **feito** — 6 de 6 |
+| Revogar/desativar a credencial antiga | ✅ **feito** — três camadas |
+| Validar a segurança dos acessos | ✅ **feito** — zero ocorrências |
 
-Três etapas obrigatórias, nesta ordem:
+### Como cada tela ficou
 
-1. **Remover todas as senhas do código** — as seis cópias. Cada pessoa digita a própria credencial. ✅ FEITO em 12/11
-2. **Revogar as credenciais antigas** — trocar a senha do usuário de teste e desativá-lo, ou apagá-lo. Uma senha que já foi pública não volta a ser segura. ⏳ PENDENTE (depende de manni@ confirmar acesso)
-3. **Validar a segurança dos acessos** — conferir de novo o arquivo público procurando segredos; testar que ninguém entra sem credencial válida; confirmar que as proteções das Etapas 1, 2, 5 e 6 continuam ativas. ✅ FEITO em 12/11 (zero ocorrências)
+Todas passaram a usar `src/components/seg/FormularioDeAcesso.tsx` — campos de e-mail e senha, autenticação individual, mensagem de erro em português sem revelar se o e-mail existe.
 
-## Onde isso entra no plano
+### Como a conta de teste foi desativada
 
-- **Etapa 4** (contas reais) é o gatilho: ao criar as contas verdadeiras, as credenciais saem do código e cada pessoa usa a sua.
-- **Etapa 5** (fechar leitura pública de demandas) só faz sentido **depois** dos itens 1 e 2 acima.
+| Camada | O que impede |
+|---|---|
+| `verified = false` | o PocketBase recusa login de conta não verificada |
+| senha aleatória de 64 caracteres | a senha antiga (pública) não serve mais |
+| e-mail → `conta-desativada-etapa4@invalid.invalid` | o endereço antigo não encontra mais conta |
 
-## Verificação de que a pendência continua aberta
+**Por que não apagar:** eventos do histórico e registros da Fase 2 apontam para esse usuário. Apagar quebraria o rastro de autoria. Desativar preserva o registro e é reversível.
 
-```bash
-curl -s "https://repositorio-adapta-cc556--preview.goskip.app/funil" \
-  | grep -o "index-[A-Za-z0-9_-]*\.js" | head -1
-# depois:
-curl -s "https://repositorio-adapta-cc556--preview.goskip.app/assets/<arquivo>.js" \
-  | grep -c "F2-Sintetico-2026!"
+---
+
+## 3. Verificações finais (12/11/2026, v0.0.181)
+
+### A conta de teste não autentica mais
+
+```
+POST /auth-with-password  (humano-sintetico-aprovador-01@f2.invalid)
+→ HTTP 400 · "Failed to authenticate."
 ```
 
-**Resultado em 12/11/2026, v0.0.179: `0`**
+### As duas contas reais existem e funcionam
 
----
-
-## Histórico
-
-- **11/11/2026 19:05** — owner pediu verificação de credenciais expostas antes de liberar a próxima rota.
-- **11/11/2026 19:05** — verificação feita: 6 cópias encontradas. Nenhum outro segredo exposto.
-- **11/11/2026 19:06** — owner decidiu: seguir com a Etapa 3 e tratar na Etapa 4; registrada como **pendência crítica obrigatória**.
-- **12/11/2026** — **6 cópias removidas**; todas as telas passam a pedir e-mail e senha. Verificação no arquivo público: **0 ocorrências** da senha, do e-mail de teste e de qualquer token.
-
----
-
-# RESOLUÇÃO — 12/11/2026 (v0.0.179)
-
-## O que foi feito
-
-As 6 cópias da credencial foram removidas do código. Cada tela agora **pede e-mail e senha** de quem usa, em vez de entrar sozinha.
-
-| # | Arquivo | Situação |
+| Conta | Papel | Prova |
 |---|---|---|
-| 1 | `src/pages/CampanhasF3Page.tsx` | credencial removida → `FormularioDeAcesso` |
-| 2 | `src/pages/PipelineF3T01Page.tsx` | idem |
-| 3 | `src/pages/ProvaF3T13Page.tsx` | idem |
-| 4 | `src/pages/ExperimentosF2.tsx` | idem (cartão próprio, agora com campos) |
-| 5 | `src/components/seg/AcessoRequerido.tsx` | idem |
-| 6 | `src/components/seg/ProtecaoDeRota.tsx` | idem |
+| `jpaulo@talentgroup.com.br` | champion | entrou (confirmado pelo owner) + e-mail de redefinição aceito |
+| `manni@talentgroup.com.br` | champion | entrou (confirmado pelo owner) + e-mail de redefinição aceito |
 
-Novo componente: `src/components/seg/FormularioDeAcesso.tsx` — formulário único reutilizado pelas telas.
+### Nenhuma senha no código público
 
-## Verificação objetiva
-
-Arquivo que o navegador recebe, versão **v0.0.179** (`index-4Q6a9_nX.js`, 2.042.101 bytes):
+Arquivo servido ao navegador: `index-4Q6a9_nX.js`, 2.042.101 bytes.
 
 | Procura | Resultado |
 |---|---|
-| `F2-Sintetico-2026!` | **0 ocorrências** |
-| `humano-sintetico-aprovador-01` | **0 ocorrências** |
-| Token da Meta (`EAA…`) | **0 ocorrências** |
+| `F2-Sintetico-2026!` | **0** |
+| `F2-Sintetico` (qualquer variante) | **0** |
+| `humano-sintetico-aprovador-01` | **0** |
+| Token da Meta (`EAA…`) | **0** |
 
-## Testes
+### Os dados continuam intactos
 
-| Teste | Resultado |
+| Coleção | Total |
 |---|---|
-| Sem sessão, abrir Funil | formulário com e-mail e senha, sem cartões |
-| Preencher e entrar | autentica e abre com 13 de 13 cartões |
-| Campanhas | 10 campanhas, conexão Meta ativa |
-| Pipeline (T01) | PIPE-F3-IN-001 visível |
-| Prova Meta | conteúdo completo |
-| Experimentos F2 | conteúdo completo |
-| Proteções de banco | escrita anônima 404; criar conta 403 |
-| Dados | demandas 13, propostas 2, vagas 2, histórico 9 — intactos |
+| demandas | 13 (9 suspect · 1 prospect · 2 oportunidade · 1 proposta) |
+| propostas | 2 |
+| vagas | 2 |
+| pipeline_log | 9 |
+| campanhas_meta | 210 (cresce pelo cron) |
 
-## O que ainda falta
+### As proteções anteriores continuam ativas
 
-**Revogar/desativar a conta de teste `humano-sintetico-aprovador-01`.** A senha dela saiu do código — ninguém a obtém mais pelo navegador — mas a conta continua ativa e serve de rede de segurança. Só será desativada depois que as **duas** contas reais confirmarem acesso: `jpaulo@` já confirmou; `manni@` ainda não.
+| Proteção | Resposta |
+|---|---|
+| escrita anônima em demanda | **404** (recusada) |
+| apagar demanda anônimo | **403** (recusado) |
+| criar conta anônimo | **403** (recusado) |
+| conta de teste | **400** (não autentica) |
+| leitura anônima de propostas, vagas, histórico, decisões, experimentos, campanhas | **0 registros** (protegidas) |
+
+**Nota:** a leitura anônima de `demandas` continua aberta (13 registros) — é o que a **Etapa 5** vai fechar.
+
+---
+
+## 4. O que ainda depende da Etapa 5
+
+A leitura pública de `demandas` é o último acesso anônimo relevante. Não contém senha nem dado pessoal (as 13 demandas são fictícias), mas mostra o pipeline a quem tiver o link. Fechar isso é a Etapa 5.
+
+---
+
+## 5. Histórico
+
+- **11/11 19:05** — owner pediu a verificação.
+- **11/11 19:05** — 6 cópias encontradas; nenhum outro segredo exposto.
+- **11/11 19:06** — owner decidiu tratar na Etapa 4; registrada como pendência crítica obrigatória.
+- **11/11 22:40** — contas reais criadas (`jpaulo@`, `manni@`, ambas champion).
+- **11/11 22:54** — tela `/reset-password` criada; e-mails de redefinição reenviados com link correto.
+- **12/11 10:34** — owner confirmou que os dois entraram.
+- **12/11** — 6 credenciais removidas; conta de teste desativada; verificação final: **zero ocorrências**.
+
+**Pendência encerrada.**
