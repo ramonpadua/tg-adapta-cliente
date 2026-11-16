@@ -89,6 +89,13 @@ F3-T01 → F3-T09 → F3-T10 → F3-T11 → F3-T12 → F3-T13 → F3-T02 → F3-
 | F3-T07 | 4 | Materializar objeto separado de sinal de conta do DHO com lista versionada e permissões fail-closed. | Maestro → Skip "repositório adapta" | Área separada, só do DHO, com um sinal da conta em dado de teste; o comercial não vê. | João Paulo | F3-004 | CA-3-09 | Dados e integrações; Fluxo e regras; Checklist | Objeto inativo com fixture, permissões server-side e prova negativa. | Captura do objeto + prova negativa + decisão C-06. | F3-T01 aceita; decisão C-06 registrada. | Parar se pedirem dado real sem política ou exposição ao comercial. | BLOQUEADA (C-06) |
 | F3-T08 | 6 | Provar isolamento, lista fechada, encaminhamento humano e fail-closed sem política. | Maestro → Skip "repositório adapta" | A prova de que o comercial não vê o sinal e que o sinal vira encaminhamento para uma pessoa. | João Paulo | F3-004 | CA-3-09/10 | Critérios de aceite; TDD | Sinal em fixture, isolamento, duplicata, rollback e encaminhamento humano. | Bateria humana + lista versionada + decisão de uso. | F3-T07 aceita. | Parar se gerar ação sem decisor ou aparecer no pipeline comercial. | BLOQUEADA (F3-T07) |
 
+## Automações do Maestro neste projeto
+
+| Automação | Task | Lê | Grava | Nunca faz | Aviso de falha | Estado |
+|---|---|---|---|---|---|---|
+| Diária de Meta Ads → "Hub de gestão Meta Ads" | — (sem task) | Meta Ads | projeto Skip paralelo | — | — | **Parar** (pedido na call de 22/10); confirmar na F3-T09 |
+| Campanhas Meta → "repositório adapta" | F3-T12/F3-T13 | métricas de campanha da conta `act_1667348577717128` (Graph API v21.0 direta, token em `META_ACCESS_TOKEN`) | `campanhas_meta`, `conexao_meta` | escrever na Meta; ler dado pessoal; gravar em outro projeto | faixa na tela + e-mail ao Champion | **Ativa e estável** — 70 linhas por execução, zero erro; cron a cada 2h + rede de segurança no ETHOS |
+
 ## Bloqueios transversais
 
 - **B3-META-01:** a F3 só lê métricas de campanha Meta pela automação da SPEC-F3-006; sem dado pessoal e sem escrita na Meta.
